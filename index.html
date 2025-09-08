@@ -11,6 +11,7 @@
             margin: 0 auto;
             position: relative;
         }
+
         .ground-line {
             position: absolute;
             top: 50%;
@@ -19,27 +20,33 @@
             height: 2px;
             background-color: black;
         }
+
         .team {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .actor {
             font-size: 2em;
             transition: transform 0.5s, background-color 0.5s;
         }
+
         .strike {
             transform: translateX(20px);
         }
+
         .flicker {
             background-color: white;
         }
+
         .health-bar-container {
             width: 50px;
             height: 10px;
             background-color: grey;
             margin-top: 5px;
         }
+
         .health-bar {
             height: 100%;
             background-color: green;
@@ -56,6 +63,25 @@
 </div>
 
 <script>
+    const skillEmojis = {
+        "Strike": "💫",
+        "Double Strike": "💥",
+        "Poison Strike": "🐟",
+        "Whirlwind": "🌪️",
+        "Fireball": "🔥",
+        "Explode": "☀️",
+        "Spark": "✨",
+        "Regeneration": "🍎",
+        "Flash Heal": "🍕",
+        "Group Heal": "🍜"
+    };
+
+    const statusEmojis = {
+        "Poison": "🐟",
+        "Burn": "🔥",
+        "Regen": "💧"
+    };
+
     // Function to load JSON log
     async function loadLog() {
         try {
@@ -110,16 +136,44 @@
     function animateActions(log) {
         log.forEach((event, index) => {
             setTimeout(() => {
-
                 if (event.type === "playground.engine_v1.CombatEvent.SkillUsed") {
-
                     const actorElement = document.getElementById(`actor-${event.actor}`);
+                    const skillEmoji = document.createElement('div');
+                    skillEmoji.textContent = skillEmojis[event.skill];
+                    skillEmoji.style.position = 'absolute';
+                    skillEmoji.style.fontSize = '2em';
+                    skillEmoji.style.transition = 'transform 0.5s, opacity 0.5s';
+                    skillEmoji.style.opacity = 1;
+
+                    const actorElementRect = actorElement.getBoundingClientRect();
+                    const targetElementRect = document.getElementById(`actor-${event.targets[0]}`).getBoundingClientRect();
+
+                    document.body.appendChild(skillEmoji);
+
+                    // Position emoji at the actor's position
+                    skillEmoji.style.left = `${actorElementRect.left + window.scrollX}px`;
+                    skillEmoji.style.top = `${actorElementRect.top + window.scrollY}px`;
+
+                    // Move emoji to target's position
+                    setTimeout(() => {
+                        skillEmoji.style.transform = `translate(${targetElementRect.left - actorElementRect.left}px, ${targetElementRect.top - actorElementRect.top}px)`;
+                    }, 0);
+
+                    // Fade out and remove emoji after animation
+                    setTimeout(() => {
+                        skillEmoji.style.opacity = 0;
+                        document.body.removeChild(skillEmoji);
+                    }, 1000);
+
+                    // Animate actor movement
                     actorElement.classList.add('strike');
                     setTimeout(() => actorElement.classList.remove('strike'), 500);
 
                 } else if (event.type === "playground.engine_v1.CombatEvent.DamageDealt") {
 
                     const targetElement = document.getElementById(`actor-${event.target}`);
+
+                    // Flicker effect on damage received
                     targetElement.classList.add('flicker');
                     setTimeout(() => targetElement.classList.remove('flicker'), 500);
 
@@ -128,6 +182,30 @@
 
                     const targetHealthBar = targetElement.querySelector('.health-bar');
                     targetHealthBar.style.width = `${targetActorHpPercentage}%`;
+
+                } else if (event.type === "playground.engine_v1.CombatEvent.ResourceDrained") {
+
+                    const statusEffectDiv = document.createElement('div');
+                    statusEffectDiv.textContent = statusEmojis[event.buffId];
+                    statusEffectDiv.style.fontSize = '1.5em';
+                    statusEffectDiv.style.position = 'absolute';
+                    statusEffectDiv.style.transition = 'opacity 0.5s';
+                    statusEffectDiv.style.opacity = 1;
+
+                    const targetHealthBarContainer = document.getElementById(`actor-${event.target}`).querySelector('.health-bar-container');
+                    const targetHealthBarContainerRect = targetHealthBarContainer.getBoundingClientRect();
+
+                    document.body.appendChild(statusEffectDiv);
+
+                    // Position emoji next to the health bar
+                    statusEffectDiv.style.left = `${targetHealthBarContainerRect.right + window.scrollX + 10}px`;
+                    statusEffectDiv.style.top = `${targetHealthBarContainerRect.top + window.scrollY}px`;
+
+                    // Fade out and remove status effect emoji after brief display
+                    setTimeout(() => {
+                        statusEffectDiv.style.opacity = 0;
+                        document.body.removeChild(statusEffectDiv);
+                    }, 1000);
                 }
 
             }, index * 1000); // Delay each action by 1 second
