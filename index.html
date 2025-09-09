@@ -73,13 +73,13 @@
         "Spark": "✨",
         "Regeneration": "🍎",
         "Flash Heal": "🍕",
-        "Group Heal": "🍜"
+        "Group Heal": "🍜🍎"
     };
 
     const statusEmojis = {
         "Poison": "🐟",
         "Burn": "🔥",
-        "Regen": "💧"
+        "Regen": "🍎"
     };
 
     // Function to load JSON log
@@ -163,11 +163,11 @@
                     setTimeout(() => {
                         skillEmoji.style.opacity = 0;
                         document.body.removeChild(skillEmoji);
-                    }, 1000);
+                    }, 500);
 
                     // Animate actor movement
                     actorElement.classList.add('strike');
-                    setTimeout(() => actorElement.classList.remove('strike'), 500);
+                    setTimeout(() => actorElement.classList.remove('strike'), 100);
 
                 } else if (event.type === "playground.engine_v1.CombatEvent.DamageDealt") {
 
@@ -175,7 +175,7 @@
 
                     // Flicker effect on damage received
                     targetElement.classList.add('flicker');
-                    setTimeout(() => targetElement.classList.remove('flicker'), 500);
+                    setTimeout(() => targetElement.classList.remove('flicker'), 100);
 
                     // Update health bar based on new targetHp value
                     const targetActorHpPercentage = (event.targetHp / event.snapshot.actors.find(a => a.name === event.target).maxHp) * 100;
@@ -205,10 +205,10 @@
                     setTimeout(() => {
                         statusEffectDiv.style.opacity = 0;
                         document.body.removeChild(statusEffectDiv);
-                    }, 1000);
+                    }, 500);
                 }
 
-            }, index * 1000); // Delay each action by 1 second
+            }, index * 500); // Delay each action by (time multiplier)
 
         });
     }
