@@ -2,23 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fight Animation</title>
+    <title>Holorena Fight Animation</title>
     <style>
         .battlefield {
             display: flex;
             justify-content: space-around; /* Changed from space-between to space-around */
-            width: 30%; /* Reduced width to bring teams closer */
+            width: 50%; /* Reduced width to bring teams closer */
             margin: 0 auto;
             position: relative;
-        }
-
-        .ground-line {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: black;
         }
 
         .team {
@@ -51,16 +42,42 @@
             height: 100%;
             background-color: green;
         }
+        .action-log {
+            width: 40%;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            height: 60px; /* Adjust height based on how much space you want */
+            overflow-y: hidden; /* Hide overflow */
+        }
+
+        .action-log div {
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .status-effects {
+            display: flex;
+            margin-left: 5px; /* Space between health bar and status effects */
+        }
+
+        .status-effect {
+            font-size: 1.2em;
+            margin-right: 3px; /* Space between different status effects */
+        }
     </style>
 </head>
 <body>
 
 <body>
 <div class="battlefield">
-    <div class="ground-line"></div>
     <div id="heroes" class="team"></div>
     <div id="enemies" class="team"></div>
 </div>
+<div id="action-log" class="action-log"></div>
 
 <script>
     const skillEmojis = {
@@ -132,6 +149,23 @@
         });
     }
 
+    // Function to update the action log
+    function updateActionLog(message) {
+        const logContainer = document.getElementById('action-log');
+
+        // Create a new message element
+        const newMessage = document.createElement('div');
+        newMessage.textContent = message;
+
+        // Append the new message to the log container
+        logContainer.appendChild(newMessage);
+
+        // Remove oldest message if there are more than three
+        if (logContainer.children.length > 3) {
+            logContainer.removeChild(logContainer.firstChild);
+        }
+    }
+
     // Function to animate actions from the log
     function animateActions(log) {
         log.forEach((event, index) => {
@@ -163,11 +197,15 @@
                     setTimeout(() => {
                         skillEmoji.style.opacity = 0;
                         document.body.removeChild(skillEmoji);
-                    }, 500);
+                    }, 1000);
 
                     // Animate actor movement
                     actorElement.classList.add('strike');
-                    setTimeout(() => actorElement.classList.remove('strike'), 100);
+                    setTimeout(() => actorElement.classList.remove('strike'), 500);
+
+                    // Update action log with skill usage
+                    const targetName = event.targets.join(', ');
+                    updateActionLog(`${event.actor} uses ${event.skill} on ${targetName}`);
 
                 } else if (event.type === "playground.engine_v1.CombatEvent.DamageDealt") {
 
@@ -175,7 +213,7 @@
 
                     // Flicker effect on damage received
                     targetElement.classList.add('flicker');
-                    setTimeout(() => targetElement.classList.remove('flicker'), 100);
+                    setTimeout(() => targetElement.classList.remove('flicker'), 500);
 
                     // Update health bar based on new targetHp value
                     const targetActorHpPercentage = (event.targetHp / event.snapshot.actors.find(a => a.name === event.target).maxHp) * 100;
@@ -205,10 +243,13 @@
                     setTimeout(() => {
                         statusEffectDiv.style.opacity = 0;
                         document.body.removeChild(statusEffectDiv);
-                    }, 500);
+                    }, 1000);
+
+                    // Update action log with resource tick info
+                    updateActionLog(`${event.target} affected by ${event.buffId}`);
                 }
 
-            }, index * 500); // Delay each action by (time multiplier)
+            }, index * 400); // Delay each action by 1 second
 
         });
     }
