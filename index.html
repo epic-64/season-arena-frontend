@@ -40,7 +40,9 @@
 
         .health-bar {
             height: 100%;
+            display: flex;
             background-color: green;
+            align-items: center;
         }
         .action-log {
             width: 40%;
@@ -65,7 +67,7 @@
         }
 
         .status-effect {
-            font-size: 1.2em;
+            font-size: 0.8em; /* Smaller size for status icons */
             margin-right: 3px; /* Space between different status effects */
         }
     </style>
@@ -78,6 +80,7 @@
     <div id="enemies" class="team"></div>
 </div>
 <div id="action-log" class="action-log"></div>
+
 
 <script>
     const skillEmojis = {
@@ -137,8 +140,13 @@
             // Set initial width based on current hp/maxHp
             healthBar.style.width = `${(actor.hp / actor.maxHp) * 100}%`;
 
-            // Append health bar to container and container to actor div
+            // Status effects container
+            const statusEffectsContainer = document.createElement('div');
+            statusEffectsContainer.classList.add('status-effects');
+
+            // Append health bar and status effects container to the health bar container
             healthBarContainer.appendChild(healthBar);
+            healthBarContainer.appendChild(statusEffectsContainer);
 
             // Append elements to the actor div
             actorDiv.appendChild(healthBarContainer);
@@ -146,6 +154,23 @@
             // Add actors to their respective teams
             if (actor.team === 0) heroesContainer.appendChild(actorDiv);
             else enemiesContainer.appendChild(actorDiv);
+        });
+    }
+
+    // Function to update persistent status effects display
+    function updateStatusEffectsDisplay(actorName, resourceTicks) {
+        const statusEffectsContainer = document.getElementById(`actor-${actorName}`).querySelector('.status-effects');
+
+        // Clear current displayed status effects
+        statusEffectsContainer.innerHTML = '';
+
+        resourceTicks.forEach(tick => {
+            const effectEmoji = document.createElement('span');
+            effectEmoji.textContent = statusEmojis[tick.id];
+            effectEmoji.classList.add('status-effect');
+
+            // Append each active effect emoji to the container
+            statusEffectsContainer.appendChild(effectEmoji);
         });
     }
 
@@ -169,7 +194,9 @@
     // Function to animate actions from the log
     function animateActions(log) {
         log.forEach((event, index) => {
+
             setTimeout(() => {
+
                 if (event.type === "playground.engine_v1.CombatEvent.SkillUsed") {
                     const actorElement = document.getElementById(`actor-${event.actor}`);
                     const skillEmoji = document.createElement('div');
@@ -241,13 +268,18 @@
 
                     // Fade out and remove status effect emoji after brief display
                     setTimeout(() => {
-                        statusEffectDiv.style.opacity = 0;
+                        statusEffectDiv.style.opacity= 0;
                         document.body.removeChild(statusEffectDiv);
                     }, 1000);
 
                     // Update action log with resource tick info
                     updateActionLog(`${event.target} affected by ${event.buffId}`);
                 }
+
+                // Update persistent display of all actors' status effects after each event.
+                event.snapshot.actors.forEach(actor => {
+                    updateStatusEffectsDisplay(actor.name, actor.resourceTicks);
+                });
 
             }, index * 400); // Delay each action by 1 second
 
