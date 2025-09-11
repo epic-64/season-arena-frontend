@@ -1,20 +1,9 @@
 const { createElement, updateActionLog } = require('../src/script');
-const { JSDOM } = require('jsdom');
-
-// Helper to set up DOM
-function setupDOM(html = '<!DOCTYPE html>') {
-    const dom = new JSDOM(html);
-    global.window = dom.window;
-    global.document = dom.window.document;
-}
 
 describe('createElement', () => {
     beforeEach(() => {
-        setupDOM();
-    });
-    afterEach(() => {
-        delete global.window;
-        delete global.document;
+        // Reset the document for each test
+        document.body.innerHTML = '';
     });
 
     it('creates a div with text and class', () => {
@@ -38,11 +27,7 @@ describe('createElement', () => {
 
 describe('updateActionLog', () => {
     beforeEach(() => {
-        setupDOM('<!DOCTYPE html><div id="action-log"></div>');
-    });
-    afterEach(() => {
-        delete global.window;
-        delete global.document;
+        document.body.innerHTML = '<div id="action-log"></div>';
     });
 
     it('keeps only the last 3 messages in the log', () => {
