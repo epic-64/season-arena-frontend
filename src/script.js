@@ -42,8 +42,8 @@ function updateActionLog(message) {
     const newMessage = createElement('div', { text: message });
     logContainer.appendChild(newMessage);
 
-    // Keep only last 3 messages
-    while (logContainer.children.length > 3) {
+    // Keep only last 50 messages
+    while (logContainer.children.length > 50) {
         logContainer.removeChild(logContainer.firstChild);
     }
 }

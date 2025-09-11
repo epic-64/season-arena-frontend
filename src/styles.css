@@ -5,12 +5,24 @@
 html, body { height:100%; }
 body { overflow-y:hidden; }
 
+.layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
 .battlefield {
     display: flex;
     justify-content: space-around;
     width: 90%;
     max-width: 700px;
-    margin: 40px auto 0 auto;
+    margin: 0; /* overridden; parent handles spacing */
     position: relative;
     background: linear-gradient(135deg, #23243a 60%, #3a2a4d 100%);
     border-radius: 18px;
@@ -91,8 +103,11 @@ body { overflow-y:hidden; }
 }
 
 .action-log {
-    width: 90%;
-    max-width: 600px;
+    width: 280px;
+    max-width: 280px;
+    height: 500px; /* fixed height */
+    overflow-y: auto;
+    flex-shrink: 0;
     margin: 24px auto 0 auto;
     padding: 16px;
     border: 2px solid #4e2a6e;
@@ -147,6 +162,12 @@ body {
 
 .actor:hover .portrait {
     box-shadow: 0 0 16px #ffef2f;
+}
+
+@media (max-width: 900px) {
+    .layout { flex-direction: column; align-items: center; }
+    .action-log { width: 90%; max-width: 600px; height: 260px; }
+    .battlefield { margin-top: 12px; }
 }
 
 @media (max-width: 700px) {
