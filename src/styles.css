@@ -40,8 +40,31 @@
 }
 
 .flicker {
-    background-color: #fffbe6;
-    color: #6e3a9e;
+    /* Replaces previous white flash with a pulse animation */
+    animation: damagePulse 450ms ease-out;
+    position: relative;
+}
+
+.flicker::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 50%, rgba(255,120,80,0.35), rgba(255,0,0,0) 70%);
+    pointer-events: none;
+    animation: damageFlash 450ms ease-out;
+}
+
+@keyframes damagePulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,70,40,0.9), 0 0 12px 3px rgba(255,160,70,0.6); transform: scale(1.05); }
+    55% { box-shadow: 0 0 16px 6px rgba(255,60,40,0.45), 0 0 4px 1px rgba(255,200,120,0.4); }
+    100% { box-shadow: 0 0 0 0 rgba(255,60,40,0); transform: scale(1); }
+}
+
+@keyframes damageFlash {
+    0% { opacity: 0.9; }
+    60% { opacity: 0.5; }
+    100% { opacity: 0; }
 }
 
 .health-bar-container {

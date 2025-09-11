@@ -167,8 +167,15 @@ function animateSkillUsed(event) {
 
 function animateDamageDealt(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
+
+    // Restart animation if already active
+    if (targetEl.classList.contains('flicker')) {
+        targetEl.classList.remove('flicker');
+        // Force reflow to allow animation restart
+        void targetEl.offsetWidth;
+    }
     targetEl.classList.add('flicker');
-    setTimeout(() => targetEl.classList.remove('flicker'), 500);
+    setTimeout(() => targetEl.classList.remove('flicker'), 450);
 
     const actorData = event.snapshot.actors.find(a => a.name === event.target);
     const hpPercent = (event.targetHp / actorData.maxHp) * 100;
