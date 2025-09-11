@@ -1,11 +1,20 @@
-const { createElement } = require('../src/script');
+const { createElement, updateActionLog } = require('../src/script');
 const { JSDOM } = require('jsdom');
 
+// Helper to set up DOM
+function setupDOM(html = '<!DOCTYPE html>') {
+    const dom = new JSDOM(html);
+    global.window = dom.window;
+    global.document = dom.window.document;
+}
+
 describe('createElement', () => {
-    beforeAll(() => {
-        const dom = new JSDOM('<!DOCTYPE html>');
-        global.window = dom.window;
-        global.document = dom.window.document;
+    beforeEach(() => {
+        setupDOM();
+    });
+    afterEach(() => {
+        delete global.window;
+        delete global.document;
     });
 
     it('creates a div with text and class', () => {
@@ -27,15 +36,16 @@ describe('createElement', () => {
     });
 });
 
-describe('updateActionLog should limit to 3 messages', () => {
-    beforeAll(() => {
-        const dom = new JSDOM('<!DOCTYPE html><div id="action-log"></div>');
-        global.window = dom.window;
-        global.document = dom.window.document;
+describe('updateActionLog', () => {
+    beforeEach(() => {
+        setupDOM('<!DOCTYPE html><div id="action-log"></div>');
+    });
+    afterEach(() => {
+        delete global.window;
+        delete global.document;
     });
 
     it('keeps only the last 3 messages in the log', () => {
-        const { updateActionLog } = require('../src/script');
         const logContainer = document.getElementById('action-log');
         logContainer.innerHTML = '';
         updateActionLog('Message 1');
