@@ -1,3 +1,7 @@
+:root {
+    --portrait-size: 128px;
+}
+
 .battlefield {
     display: flex;
     justify-content: space-around;
@@ -42,7 +46,7 @@
 }
 
 .health-bar-container {
-    width: 70px;
+    width: var(--portrait-size);
     height: 12px;
     background: linear-gradient(90deg, #2a2a3a 60%, #3a2a4d 100%);
     border-radius: 6px;
@@ -106,8 +110,8 @@ body {
 .portrait {
     display: block;
     margin: 0 auto 8px auto;
-    width: 96px;
-    height: 96px;
+    width: var(--portrait-size);
+    height: var(--portrait-size);
     border-radius: 8px;
     object-fit: cover;
     box-shadow: 0 0 8px #6e3a9e;
@@ -121,6 +125,7 @@ body {
 }
 
 @media (max-width: 700px) {
+    :root { --portrait-size: 96px; }
     .battlefield {
         flex-direction: column;
         width: 98%;
@@ -132,20 +137,17 @@ body {
         padding: 10px;
     }
     .health-bar-container {
-        width: 55px;
-        height: 10px;
+        /* width synced via variable */
     }
     .actor {
         font-size: 1.5em;
         padding: 6px 10px;
     }
-    .portrait {
-        width: 72px;
-        height: 72px;
-    }
+    /* Removed explicit portrait sizing; handled by variable */
 }
 
 @media (max-width: 420px) {
+    :root { --portrait-size: 72px; }
     .battlefield {
         padding: 8px 0;
     }
@@ -157,8 +159,8 @@ body {
         font-size: 1.1em;
         padding: 4px 6px;
     }
-    .portrait {
-        width: 56px;
-        height: 56px;
+    .health-bar-container {
+        /* width synced via variable */
     }
+    /* Removed explicit portrait sizing; handled by variable */
 }
