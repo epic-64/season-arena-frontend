@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "jsdom": "^26.1.0"
+  }
 }

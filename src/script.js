@@ -21,7 +21,7 @@ const statusEmojis = {
 // === Utility Functions ===
 async function loadLog() {
     try {
-        const response = await fetch('log.json');
+        const response = await fetch('src/log.json');
         return await response.json();
     } catch (error) {
         console.error('Error loading log:', error);
@@ -206,5 +206,10 @@ async function runAnimation() {
     animateActions(logData);
 }
 
-// Start animation
-runAnimation();
+// Export createElement and updateActionLog for testing
+if (typeof module !== 'undefined') {
+    module.exports = {
+        createElement,
+        updateActionLog
+    };
+}
