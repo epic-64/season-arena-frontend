@@ -206,5 +206,12 @@ async function runAnimation() {
     animateActions(logData);
 }
 
-// Start animation
-runAnimation();
+// Start animation only if running in browser (not Node.js)
+if (typeof window !== 'undefined') {
+    runAnimation();
+}
+
+// Export createElement for testing
+if (typeof module !== 'undefined') {
+    module.exports = { createElement };
+}
