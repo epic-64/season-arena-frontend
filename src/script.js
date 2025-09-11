@@ -49,6 +49,22 @@ function updateActionLog(message) {
 }
 
 // === Actor Setup ===
+function getPortraitSrc(actorName) {
+    // Map actor names to portrait filenames
+    const nameToFile = {
+        'Cleric': 'cleric.png',
+        'Fighter': 'fighter.png',
+        'Fishman': 'fishman.png',
+        'Mage': 'mage.png',
+        'Ratman': 'ratman.png',
+        'Scoundrel': 'scoundrel.png',
+        'EpicHero': 'cleric.png', // fallback for demo
+        'EpicVillain': 'mage.png' // fallback for demo
+    };
+    const file = nameToFile[actorName] || 'cleric.png';
+    return `assets/images/portraits/${file}`;
+}
+
 function initializeActors(snapshot) {
     const heroes = document.getElementById('heroes');
     const enemies = document.getElementById('enemies');
@@ -56,10 +72,22 @@ function initializeActors(snapshot) {
     snapshot.actors.forEach(actor => {
         const actorDiv = createElement('div', {
             id: `actor-${actor.name}`,
-            classes: ['actor'],
-            text: actor.name === 'EpicHero' ? '😇' :
-                actor.name === 'EpicVillain' ? '😈' : '🙂'
+            classes: ['actor']
         });
+
+        // Portrait image
+        const portraitImg = createElement('img', {
+            classes: ['portrait'],
+            styles: {
+                width: '64px',
+                height: '64px',
+                borderRadius: '8px',
+                objectFit: 'cover',
+                boxShadow: '0 0 8px #6e3a9e'
+            }
+        });
+        portraitImg.src = getPortraitSrc(actor.name);
+        portraitImg.alt = actor.name;
 
         const healthBar = createElement('div', {
             classes: ['health-bar'],
@@ -71,6 +99,7 @@ function initializeActors(snapshot) {
         const healthBarContainer = createElement('div', { classes: ['health-bar-container'] });
         healthBarContainer.append(healthBar, statusEffects);
 
+        actorDiv.appendChild(portraitImg);
         actorDiv.appendChild(healthBarContainer);
 
         (actor.team === 0 ? heroes : enemies).appendChild(actorDiv);

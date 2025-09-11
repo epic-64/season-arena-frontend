@@ -103,6 +103,23 @@ body {
     padding: 0;
 }
 
+.portrait {
+    display: block;
+    margin: 0 auto 8px auto;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 0 8px #6e3a9e;
+    background: #23243a;
+    border: 1.5px solid #4e2a6e;
+    transition: box-shadow 0.3s;
+}
+
+.actor:hover .portrait {
+    box-shadow: 0 0 16px #ffef2f;
+}
+
 @media (max-width: 700px) {
     .battlefield {
         flex-direction: column;
@@ -122,6 +139,10 @@ body {
         font-size: 1.5em;
         padding: 6px 10px;
     }
+    .portrait {
+        width: 48px;
+        height: 48px;
+    }
 }
 
 @media (max-width: 420px) {
@@ -135,5 +156,9 @@ body {
     .actor {
         font-size: 1.1em;
         padding: 4px 6px;
+    }
+    .portrait {
+        width: 36px;
+        height: 36px;
     }
 }
