@@ -206,7 +206,10 @@ async function runAnimation() {
     animateActions(logData);
 }
 
-// Export createElement for testing
+// Export createElement and updateActionLog for testing
 if (typeof module !== 'undefined') {
-    module.exports = { createElement };
+    module.exports = {
+        createElement,
+        updateActionLog
+    };
 }
