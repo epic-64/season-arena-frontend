@@ -268,10 +268,55 @@ function animateResourceDrained(event) {
     updateActionLog(`${event.target} affected by ${event.buffId}`);
 }
 
+function animateHeal(event) {
+    // Update target health bar if data present (no calculations beyond direct field usage)
+    try {
+        if (!event.target || typeof event.targetHp === 'undefined' || !event.snapshot) {
+            // Still attempt to log if minimal fields exist
+        } else {
+            const targetEl = document.getElementById(`actor-${event.target}`);
+            if (targetEl) {
+                const actorData = event.snapshot.actors.find(a => a.name === event.target);
+                if (actorData && actorData.maxHp) {
+                    const hpPercent = (event.targetHp / actorData.maxHp) * 100;
+                    const healthBar = targetEl.querySelector('.health-bar');
+                    if (healthBar) healthBar.style.width = `${hpPercent}%`;
+                }
+            }
+        }
+
+        const healer = event.source || event.actor || 'Unknown';
+        const target = event.target || (Array.isArray(event.targets) ? event.targets.join(', ') : 'Unknown');
+        let healAmount;
+        for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
+            if (Object.prototype.hasOwnProperty.call(event, f)) { healAmount = event[f]; break; }
+        }
+        let maxHp;
+        if (event.snapshot && event.target) {
+            const actorData = event.snapshot.actors.find(a => a.name === event.target);
+            maxHp = actorData?.maxHp;
+        }
+        const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
+        const parts = [];
+        if (healAmount !== undefined) {
+            parts.push(`${healer} heals ${target} for ${healAmount}`);
+        } else {
+            parts.push(`${healer} heals ${target}`);
+        }
+        if (newHp !== undefined && maxHp !== undefined) {
+            parts.push(`HP: ${newHp}/${maxHp}`);
+        }
+        updateActionLog(parts.join(' '));
+    } catch (e) {
+        console.debug('Heal log skipped:', e);
+    }
+}
+
 function animateActions(log) {
     log.forEach((event, index) => {
         setTimeout(() => {
-            switch (event.type) {
+            const type = event.type;
+            switch (type) {
                 case "playground.engine_v1.CombatEvent.SkillUsed":
                     animateSkillUsed(event);
                     break;
@@ -281,12 +326,19 @@ function animateActions(log) {
                 case "playground.engine_v1.CombatEvent.ResourceDrained":
                     animateResourceDrained(event);
                     break;
+                default:
+                    // Heuristic: treat any event whose type contains 'Heal' as a heal event
+                    if (type && type.includes('Heal')) {
+                        animateHeal(event);
+                    }
             }
 
             // Update all status effects
-            event.snapshot.actors.forEach(actor =>
-                updateStatusEffectsDisplay(actor.name, actor.resourceTicks)
-            );
+            if (event.snapshot && event.snapshot.actors) {
+                event.snapshot.actors.forEach(actor =>
+                    updateStatusEffectsDisplay(actor.name, actor.resourceTicks)
+                );
+            }
 
         }, index * 400);
     });
