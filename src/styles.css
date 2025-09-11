@@ -118,6 +118,27 @@ body { overflow-y:hidden; }
     font-family: 'Merriweather', serif;
     font-size: 1.1em;
     letter-spacing: 0.02em;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #6e3a9e #23243a; /* thumb track */
+}
+
+/* Themed Scrollbars (WebKit browsers) */
+.action-log::-webkit-scrollbar {
+    width: 10px;
+}
+.action-log::-webkit-scrollbar-track {
+    background: #23243a;
+    border-radius: 10px;
+}
+.action-log::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6e3a9e, #4e2a6e);
+    border-radius: 10px;
+    border: 2px solid #23243a;
+    box-shadow: 0 0 6px #6e3a9e;
+}
+.action-log::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ffef2f, #b46ef5);
+    box-shadow: 0 0 8px #ffef2f;
 }
 
 .action-log div {
