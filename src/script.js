@@ -39,12 +39,24 @@ function createElement(tag, options = {}) {
 
 function updateActionLog(message) {
     const logContainer = document.getElementById('action-log');
+
+    // Determine if user is currently at (or very near) the bottom BEFORE appending
+    // Using a small threshold to account for fractional pixels / rounding.
+    const threshold = 8;
+    const distanceFromBottom = logContainer.scrollHeight - logContainer.scrollTop - logContainer.clientHeight;
+    const wasAtBottom = distanceFromBottom <= threshold;
+
     const newMessage = createElement('div', { text: message });
     logContainer.appendChild(newMessage);
 
     // Keep only last 50 messages
     while (logContainer.children.length > 50) {
         logContainer.removeChild(logContainer.firstChild);
+    }
+
+    // Auto-scroll only if the user had not scrolled up
+    if (wasAtBottom) {
+        logContainer.scrollTop = logContainer.scrollHeight;
     }
 }
 
