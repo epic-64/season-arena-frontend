@@ -2,6 +2,9 @@
     --portrait-size: 128px;
 }
 
+html, body { height:100%; }
+body { overflow-y:hidden; }
+
 .battlefield {
     display: flex;
     justify-content: space-around;
@@ -185,4 +188,8 @@ body {
         /* width synced via variable */
     }
     /* Removed explicit portrait sizing; handled by variable */
+}
+
+@media (max-height: 700px) {
+    body { overflow-y:auto; }
 }

@@ -57,11 +57,20 @@ function getPortraitSrc(actorName) {
         'Fishman': 'fishman.png',
         'Mage': 'mage.png',
         'Ratman': 'ratman.png',
-        'Scoundrel': 'scoundrel.png',
-        'Villain': 'ratman.png'
+        'Scoundrel': 'scoundrel.png'
+        // Removed fixed Villain mapping to allow randomization
     };
-    // Find key contained in actorName (case-insensitive)
+
     const lowerName = actorName.toLowerCase();
+
+    // Special case: any name containing 'villain' randomizes among monster portraits
+    if (lowerName.includes('villain')) {
+        const villainOptions = ['ratman.png', 'fishman.png', 'scoundrel.png'];
+        const file = villainOptions[Math.floor(Math.random() * villainOptions.length)];
+        return `assets/images/portraits/${file}`;
+    }
+
+    // Generic containment lookup
     let file = 'cleric.png'; // default
     for (const key in nameToFile) {
         if (lowerName.includes(key.toLowerCase())) {
