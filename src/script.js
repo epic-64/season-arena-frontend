@@ -58,10 +58,17 @@ function getPortraitSrc(actorName) {
         'Mage': 'mage.png',
         'Ratman': 'ratman.png',
         'Scoundrel': 'scoundrel.png',
-        'EpicHero': 'cleric.png', // fallback for demo
-        'EpicVillain': 'mage.png' // fallback for demo
+        'Villain': 'ratman.png'
     };
-    const file = nameToFile[actorName] || 'cleric.png';
+    // Find key contained in actorName (case-insensitive)
+    const lowerName = actorName.toLowerCase();
+    let file = 'cleric.png'; // default
+    for (const key in nameToFile) {
+        if (lowerName.includes(key.toLowerCase())) {
+            file = nameToFile[key];
+            break;
+        }
+    }
     return `assets/images/portraits/${file}`;
 }
 
