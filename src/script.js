@@ -21,7 +21,7 @@ const statusEmojis = {
 // === Utility Functions ===
 async function loadLog() {
     try {
-        const response = await fetch('log.json');
+        const response = await fetch('src/log.json');
         return await response.json();
     } catch (error) {
         console.error('Error loading log:', error);
