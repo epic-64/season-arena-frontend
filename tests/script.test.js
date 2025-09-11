@@ -1,4 +1,4 @@
-const { createElement } = require('./script');
+const { createElement } = require('./../script');
 const { JSDOM } = require('jsdom');
 
 describe('createElement', () => {
