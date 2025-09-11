@@ -103,8 +103,8 @@ body { overflow-y:hidden; }
 }
 
 .action-log {
-    width: 280px;
-    max-width: 280px;
+    width: 360px; /* widened from 280px */
+    max-width: 360px; /* widened from 280px */
     height: 500px; /* fixed height */
     overflow-y: auto;
     flex-shrink: 0;

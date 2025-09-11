@@ -191,6 +191,43 @@ function animateDamageDealt(event) {
 
     const healthBar = targetEl.querySelector('.health-bar');
     healthBar.style.width = `${hpPercent}%`;
+
+    // === Enhanced Logging (no derived calculations, only direct event fields) ===
+    try {
+        const sourceName = event.source || event.actor || 'Unknown';
+        const targetName = event.target || 'Unknown';
+        const maxHp = actorData?.maxHp;
+        const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
+
+        // Attempt to locate a damage field without inferring or computing
+        const candidateFields = ['damage', 'amount', 'value', 'delta', 'deltaHp', 'hpChange'];
+        let damageVal = undefined;
+        for (const f of candidateFields) {
+            if (typeof event[f] !== 'undefined') { damageVal = event[f]; break; }
+        }
+
+        // Critical hit indicator if any boolean-like field present
+        const critFlags = ['crit', 'critical', 'isCrit', 'isCritical'];
+        let isCrit = false;
+        for (const f of critFlags) {
+            if (event[f]) { isCrit = true; break; }
+        }
+
+        let messageParts = [];
+        if (damageVal !== undefined) {
+            messageParts.push(`${sourceName} hits ${targetName} for ${damageVal} dmg`);
+        } else {
+            messageParts.push(`${sourceName} affects ${targetName}`);
+        }
+        if (isCrit) messageParts.push('(CRIT!)');
+        if (newHp !== undefined && maxHp !== undefined) {
+            messageParts.push(`HP: ${newHp}/${maxHp}`);
+        }
+        updateActionLog(messageParts.join(' '));
+    } catch (e) {
+        // Fail silently to avoid breaking animation if unexpected shape
+        console.debug('Damage log enhancement skipped:', e);
+    }
 }
 
 function animateResourceDrained(event) {
