@@ -147,6 +147,34 @@ function updateStatusEffectsDisplay(actorName, resourceTicks) {
     });
 }
 
+function updateAllActorDisplays(snapshot) {
+    if (!snapshot || !snapshot.actors) return;
+    snapshot.actors.forEach(actor => {
+        const actorDiv = document.getElementById(`actor-${actor.name}`);
+        if (!actorDiv) return;
+        // Update health bar
+        const healthBar = actorDiv.querySelector('.health-bar');
+        if (healthBar && typeof actor.hp === 'number' && typeof actor.maxHp === 'number') {
+            healthBar.style.width = `${(actor.hp / actor.maxHp) * 100}%`;
+        }
+        // Update status effects
+        const statusEffects = actorDiv.querySelector('.status-effects');
+        if (statusEffects) {
+            statusEffects.innerHTML = '';
+            if (Array.isArray(actor.resourceTicks)) {
+                actor.resourceTicks.forEach(tick => {
+                    const effectEmoji = createElement('span', {
+                        text: statusEmojis[tick.id],
+                        classes: ['status-effect']
+                    });
+                    statusEffects.appendChild(effectEmoji);
+                });
+            }
+        }
+        // You can add more updates here (e.g., cooldowns, buffs, etc.)
+    });
+}
+
 // === Animations ===
 function animateSkillUsed(event) {
     const actorEl = document.getElementById(`actor-${event.actor}`);
@@ -235,18 +263,7 @@ function animateDamageDealt(event) {
         const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
 
         // Attempt to locate a damage field without inferring or computing
-        const candidateFields = ['damage', 'amount', 'value', 'delta', 'deltaHp', 'hpChange'];
-        let damageVal = undefined;
-        for (const f of candidateFields) {
-            if (typeof event[f] !== 'undefined') { damageVal = event[f]; break; }
-        }
-
-        // Critical hit indicator if any boolean-like field present
-        const critFlags = ['crit', 'critical', 'isCrit', 'isCritical'];
-        let isCrit = false;
-        for (const f of critFlags) {
-            if (event[f]) { isCrit = true; break; }
-        }
+        let damageVal = event['amount'];
 
         let messageParts = [];
         if (damageVal !== undefined) {
@@ -254,7 +271,6 @@ function animateDamageDealt(event) {
         } else {
             messageParts.push(`${sourceName} affects ${targetName}`);
         }
-        if (isCrit) messageParts.push('(CRIT!)');
         if (newHp !== undefined && maxHp !== undefined) {
             messageParts.push(`HP: ${newHp}/${maxHp}`);
         }
@@ -269,8 +285,8 @@ function animateResourceDrained(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
     if (!targetEl) return;
 
-    // Update health bar if targetHp is present
-    if (typeof event.targetHp !== 'undefined' && event.snapshot) {
+    // Always update health bar if targetHp is present (for all buff types, including HoT)
+    if (event.snapshot) {
         const actorData = event.snapshot.actors.find(a => a.name === event.target);
         if (actorData && actorData.maxHp) {
             const hpPercent = (event.targetHp / actorData.maxHp) * 100;
@@ -281,7 +297,7 @@ function animateResourceDrained(event) {
 
     // Show effect emoji above target for resource drain, heal, or DoT
     let effectEmojiText = statusEmojis[event.buffId] || '✨';
-
+    // Update health bar if targetHp is present
     const effectEmoji = createElement('div', {
         text: effectEmojiText,
         styles: {
@@ -413,13 +429,10 @@ function animateActions(log) {
                     break;
             }
 
-            // Update all status effects
-            if (event.snapshot && event.snapshot.actors) {
-                event.snapshot.actors.forEach(actor =>
-                    updateStatusEffectsDisplay(actor.name, actor.resourceTicks)
-                );
+            // Replace status effect update with full actor display update
+            if (event.snapshot) {
+                updateAllActorDisplays(event.snapshot);
             }
-
         }, index * 400);
     });
 }
