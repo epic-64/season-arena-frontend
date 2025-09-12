@@ -97,7 +97,9 @@ function getPortraitSrc(actorName) {
 function initializeActors(snapshot) {
     const heroes = document.getElementById('heroes');
     const enemies = document.getElementById('enemies');
-
+    // Clear previous actors to avoid duplicate portraits when rebuilding state
+    heroes.innerHTML = '';
+    enemies.innerHTML = '';
     snapshot.actors.forEach(actor => {
         const actorDiv = createElement('div', {
             id: `actor-${actor.name}`,
