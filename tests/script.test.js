@@ -30,16 +30,14 @@ describe('updateActionLog', () => {
         document.body.innerHTML = '<div id="action-log"></div>';
     });
 
-    it('keeps only the last 3 messages in the log', () => {
+    it('keeps only the last 50 messages in the log', () => {
         const logContainer = document.getElementById('action-log');
         logContainer.innerHTML = '';
-        updateActionLog('Message 1');
-        updateActionLog('Message 2');
-        updateActionLog('Message 3');
-        updateActionLog('Message 4');
-        expect(logContainer.children.length).toBe(3);
-        expect(logContainer.children[0].textContent).toBe('Message 2');
-        expect(logContainer.children[1].textContent).toBe('Message 3');
-        expect(logContainer.children[2].textContent).toBe('Message 4');
+        for (let i = 1; i <= 55; i++) {
+            updateActionLog(`Message ${i}`);
+        }
+        expect(logContainer.children.length).toBe(50);
+        expect(logContainer.firstChild.textContent).toBe('Message 6');
+        expect(logContainer.lastChild.textContent).toBe('Message 55');
     });
 });
