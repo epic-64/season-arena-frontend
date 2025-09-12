@@ -402,19 +402,39 @@ const playback = {
     play() {
         if (this.playing) return;
         this.playing = true;
+        updatePlayToggleButton();
         this.scheduleNext();
     },
 
     pause() {
         this.playing = false;
         if (this.timer) clearTimeout(this.timer);
+        updatePlayToggleButton();
+    },
+
+    toggle() {
+        if (this.playing) {
+            this.pause();
+        } else {
+            // If at end, reset to allow replay
+            if (this.index >= this.events.length - 1) {
+                this.reset();
+            }
+            this.play();
+        }
+    },
+
+    reset() {
+        this.pause();
+        this.index = -1;
+        this.rebuildState();
     },
 
     scheduleNext() {
         if (!this.playing) return;
         if (this.index >= this.events.length - 1) {
             this.pause();
-            return;
+            return; // updatePlayToggleButton already called in pause
         }
         this.stepForward(true);
         this.timer = setTimeout(() => this.scheduleNext(), this.baseInterval / this.speed);
@@ -426,10 +446,16 @@ const playback = {
         const evt = this.events[this.index];
         executeEvent(evt, withAnimation);
         if (evt.snapshot) updateAllActorDisplays(evt.snapshot);
+        if (this.index >= this.events.length - 1) {
+            // If playing and reached end, force pause to update button state
+            if (this.playing) this.pause();
+        }
     },
 
     stepBack() {
         if (this.index < 0) return;
+        // Stepping back while auto-playing should pause
+        if (this.playing) this.pause();
         this.index--;
         this.rebuildState();
     },
@@ -453,6 +479,7 @@ const playback = {
             const evt = this.events[i];
             logEventSummary(evt);
         }
+        updatePlayToggleButton();
     },
 
     findSnapshotForIndex(i) {
@@ -471,6 +498,22 @@ const playback = {
         }
     }
 };
+
+// Helper: update play/pause toggle button label/state
+function updatePlayToggleButton() {
+    const btn = document.getElementById('btn-toggle-play');
+    if (!btn) return;
+    btn.classList.remove('is-playing', 'is-ended');
+    if (playback.playing) {
+        btn.textContent = 'Pause';
+        btn.classList.add('is-playing');
+    } else if (playback.index >= playback.events.length - 1 && playback.events.length > 0) {
+        btn.textContent = 'Replay';
+        btn.classList.add('is-ended');
+    } else {
+        btn.textContent = 'Play';
+    }
+}
 
 // === Event Execution ===
 function logEventSummary(event) {
@@ -526,20 +569,22 @@ async function runAnimation() {
     initializeActors(playback.initialSnapshot);
     playback.init(logData);
     wireControls();
+    // Auto-play by default
+    playback.play();
 }
 
 function wireControls() {
-    const btnPlay = document.getElementById('btn-play');
-    const btnPause = document.getElementById('btn-pause');
+    const btnToggle = document.getElementById('btn-toggle-play');
     const btnPrev = document.getElementById('btn-prev');
     const btnNext = document.getElementById('btn-next');
     const speedSel = document.getElementById('play-speed');
 
-    btnPlay.onclick = () => playback.play();
-    btnPause.onclick = () => playback.pause();
+    btnToggle.onclick = () => playback.toggle();
     btnPrev.onclick = () => playback.stepBack();
     btnNext.onclick = () => playback.stepForward(true);
     speedSel.onchange = e => playback.setSpeed(parseFloat(e.target.value));
+
+    updatePlayToggleButton();
 }
 
 // Export for testing
