@@ -1,21 +1,22 @@
 // === Emoji Mappings ===
 const skillEmojis = {
-    "Strike": "💫",
-    "Double Strike": "💥",
-    "Poison Strike": "🐟",
+    "Strike": "🗡️",
+    "Double Strike": "⚔️",
+    "Poison Strike": "🗡️🧪",
     "Whirlwind": "🌪️",
-    "Fireball": "🔥",
+    "Fireball": "☄️🔥",
     "Explode": "☀️",
     "Spark": "✨",
-    "Regeneration": "🍎",
-    "Flash Heal": "🍕",
-    "Group Heal": "🍜🍎"
+    "Regeneration": "💞",
+    "Flash Heal": "💊",
+    "Group Heal": "👥💞"
 };
 
 const statusEmojis = {
-    "Poison": "🐟",
+    "Poison": "🧪",
     "Burn": "🔥",
-    "Regen": "🍎"
+    "Regen": "💖",
+    "Protection": "🛡️"
 };
 
 // === Utility Functions ===
@@ -204,6 +205,28 @@ function animateDamageDealt(event) {
     const healthBar = targetEl.querySelector('.health-bar');
     healthBar.style.width = `${hpPercent}%`;
 
+    // Show damage effect emoji above target
+    const damageEmoji = createElement('div', {
+        text: '💥',
+        styles: {
+            fontSize: '2em',
+            position: 'absolute',
+            left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
+            top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
+            transition: 'opacity 0.7s, transform 0.7s',
+            opacity: 1,
+            pointerEvents: 'none'
+        }
+    });
+    document.body.appendChild(damageEmoji);
+    setTimeout(() => {
+        damageEmoji.style.transform = 'translateY(-30px)';
+        damageEmoji.style.opacity = 0;
+    }, 100);
+    setTimeout(() => {
+        damageEmoji.remove();
+    }, 800);
+
     // === Enhanced Logging (no derived calculations, only direct event fields) ===
     try {
         const sourceName = event.source || event.actor || 'Unknown';
@@ -243,27 +266,45 @@ function animateDamageDealt(event) {
 }
 
 function animateResourceDrained(event) {
+    const targetEl = document.getElementById(`actor-${event.target}`);
+    if (!targetEl) return;
+
+    // Update health bar if targetHp is present
+    if (typeof event.targetHp !== 'undefined' && event.snapshot) {
+        const actorData = event.snapshot.actors.find(a => a.name === event.target);
+        if (actorData && actorData.maxHp) {
+            const hpPercent = (event.targetHp / actorData.maxHp) * 100;
+            const healthBar = targetEl.querySelector('.health-bar');
+            if (healthBar) healthBar.style.width = `${hpPercent}%`;
+        }
+    }
+
+    // Show effect emoji above target for resource drain, heal, or DoT
+    let effectEmojiText = statusEmojis[event.buffId] || '✨';
+
     const effectEmoji = createElement('div', {
-        text: statusEmojis[event.buffId],
+        text: effectEmojiText,
         styles: {
-            fontSize: '1.5em',
+            fontSize: '2em',
             position: 'absolute',
-            transition: 'opacity 0.5s',
-            opacity: 1
+            left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
+            top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
+            transition: 'opacity 0.7s, transform 0.7s',
+            opacity: 1,
+            pointerEvents: 'none'
         }
     });
-
-    const targetContainer = document.querySelector(`#actor-${event.target} .health-bar-container`);
-    const rect = targetContainer.getBoundingClientRect();
-
     document.body.appendChild(effectEmoji);
-    effectEmoji.style.left = `${rect.right + window.scrollX + 10}px`;
-    effectEmoji.style.top = `${rect.top + window.scrollY}px`;
+
+    // Animate upward and fade out
+    setTimeout(() => {
+        effectEmoji.style.transform = 'translateY(-30px)';
+        effectEmoji.style.opacity = 0;
+    }, 100);
 
     setTimeout(() => {
-        effectEmoji.style.opacity = 0;
         effectEmoji.remove();
-    }, 1000);
+    }, 800);
 
     updateActionLog(`${event.target} affected by ${event.buffId}`);
 }
@@ -282,6 +323,27 @@ function animateHeal(event) {
                     const healthBar = targetEl.querySelector('.health-bar');
                     if (healthBar) healthBar.style.width = `${hpPercent}%`;
                 }
+                // Show heal effect emoji above target
+                const healEmoji = createElement('div', {
+                    text: '🍎',
+                    styles: {
+                        fontSize: '2em',
+                        position: 'absolute',
+                        left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
+                        top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
+                        transition: 'opacity 0.7s, transform 0.7s',
+                        opacity: 1,
+                        pointerEvents: 'none'
+                    }
+                });
+                document.body.appendChild(healEmoji);
+                setTimeout(() => {
+                    healEmoji.style.transform = 'translateY(-30px)';
+                    healEmoji.style.opacity = 0;
+                }, 100);
+                setTimeout(() => {
+                    healEmoji.remove();
+                }, 800);
             }
         }
 
