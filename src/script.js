@@ -227,12 +227,6 @@ function animateDamageDealt(event) {
     targetEl.classList.add('flicker');
     setTimeout(() => targetEl.classList.remove('flicker'), 450);
 
-    const actorData = event.snapshot.actors.find(a => a.name === event.target);
-    const hpPercent = (event.targetHp / actorData.maxHp) * 100;
-
-    const healthBar = targetEl.querySelector('.health-bar');
-    healthBar.style.width = `${hpPercent}%`;
-
     // Show damage effect emoji above target
     const damageEmoji = createElement('div', {
         text: '💥',
@@ -257,6 +251,7 @@ function animateDamageDealt(event) {
 
     // === Enhanced Logging (no derived calculations, only direct event fields) ===
     try {
+        const actorData = event.snapshot.actors.find(a => a.name === event.target);
         const sourceName = event.source || event.actor || 'Unknown';
         const targetName = event.target || 'Unknown';
         const maxHp = actorData?.maxHp;
@@ -285,19 +280,8 @@ function animateResourceDrained(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
     if (!targetEl) return;
 
-    // Always update health bar if targetHp is present (for all buff types, including HoT)
-    if (event.snapshot) {
-        const actorData = event.snapshot.actors.find(a => a.name === event.target);
-        if (actorData && actorData.maxHp) {
-            const hpPercent = (event.targetHp / actorData.maxHp) * 100;
-            const healthBar = targetEl.querySelector('.health-bar');
-            if (healthBar) healthBar.style.width = `${hpPercent}%`;
-        }
-    }
-
     // Show effect emoji above target for resource drain, heal, or DoT
     let effectEmojiText = statusEmojis[event.buffId] || '✨';
-    // Update health bar if targetHp is present
     const effectEmoji = createElement('div', {
         text: effectEmojiText,
         styles: {
@@ -326,20 +310,14 @@ function animateResourceDrained(event) {
 }
 
 function animateHeal(event) {
-    // Update target health bar if data present (no calculations beyond direct field usage)
+    // Removed obsolete health bar update logic
     try {
         if (!event.target || typeof event.targetHp === 'undefined' || !event.snapshot) {
             // Still attempt to log if minimal fields exist
         } else {
             const targetEl = document.getElementById(`actor-${event.target}`);
             if (targetEl) {
-                const actorData = event.snapshot.actors.find(a => a.name === event.target);
-                if (actorData && actorData.maxHp) {
-                    const hpPercent = (event.targetHp / actorData.maxHp) * 100;
-                    const healthBar = targetEl.querySelector('.health-bar');
-                    if (healthBar) healthBar.style.width = `${hpPercent}%`;
-                }
-                // Show heal effect emoji above target
+                // Only show heal effect emoji above target
                 const healEmoji = createElement('div', {
                     text: '🍎',
                     styles: {
