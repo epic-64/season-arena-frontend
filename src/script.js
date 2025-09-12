@@ -313,9 +313,23 @@ function animateHeal(event) {
 }
 
 function animateActions(log) {
-    log.forEach((event, index) => {
+    let relevantLog = log.filter(event => {
+        return [
+            "playground.engine_v1.CombatEvent.SkillUsed",
+            "playground.engine_v1.CombatEvent.DamageDealt",
+            "playground.engine_v1.CombatEvent.ResourceDrained",
+            "playground.engine_v1.CombatEvent.Healed",
+            // "playground.engine_v1.CombatEvent.BuffApplied",
+            // "playground.engine_v1.CombatEvent.BuffExpired",
+            // "playground.engine_v1.CombatEvent.TurnStart"
+        ].includes(event.type);
+    });
+
+    relevantLog.forEach((event, index) => {
         setTimeout(() => {
             const type = event.type;
+
+            updateActionLog(type);
 
             switch (type) {
                 case "playground.engine_v1.CombatEvent.SkillUsed":
@@ -333,8 +347,8 @@ function animateActions(log) {
                 case "playground.engine_v1.CombatEvent.BuffApplied":
                 case "playground.engine_v1.CombatEvent.BuffExpired":
                 case "playground.engine_v1.CombatEvent.TurnStart":
-                default:
-                    updateActionLog(type);
+                default: // No action
+                    break;
             }
 
             // Update all status effects
