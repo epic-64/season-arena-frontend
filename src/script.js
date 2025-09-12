@@ -316,6 +316,7 @@ function animateActions(log) {
     log.forEach((event, index) => {
         setTimeout(() => {
             const type = event.type;
+
             switch (type) {
                 case "playground.engine_v1.CombatEvent.SkillUsed":
                     animateSkillUsed(event);
@@ -326,11 +327,14 @@ function animateActions(log) {
                 case "playground.engine_v1.CombatEvent.ResourceDrained":
                     animateResourceDrained(event);
                     break;
+                case "playground.engine_v1.CombatEvent.Healed":
+                    animateHeal(event);
+                    break;
+                case "playground.engine_v1.CombatEvent.BuffApplied":
+                case "playground.engine_v1.CombatEvent.BuffExpired":
+                case "playground.engine_v1.CombatEvent.TurnStart":
                 default:
-                    // Heuristic: treat any event whose type contains 'Heal' as a heal event
-                    if (type && type.includes('Heal')) {
-                        animateHeal(event);
-                    }
+                    updateActionLog(type);
             }
 
             // Update all status effects
