@@ -374,68 +374,173 @@ function animateHeal(event) {
     }
 }
 
-function animateActions(log) {
-    let relevantLog = log.filter(event => {
-        return [
-            "playground.engine_v1.CombatEvent.SkillUsed",
-            "playground.engine_v1.CombatEvent.DamageDealt",
-            "playground.engine_v1.CombatEvent.ResourceDrained",
-            "playground.engine_v1.CombatEvent.Healed",
-            // "playground.engine_v1.CombatEvent.BuffApplied",
-            // "playground.engine_v1.CombatEvent.BuffExpired",
-            // "playground.engine_v1.CombatEvent.TurnStart"
-        ].includes(event.type);
-    });
+// === Playback Controller ===
+const playback = {
+    rawLog: [],
+    events: [],
+    index: -1,          // last executed index
+    playing: false,
+    timer: null,
+    baseInterval: 400,
+    speed: 1,
+    initialSnapshot: null,
 
-    relevantLog.forEach((event, index) => {
-        setTimeout(() => {
-            const type = event.type;
+    init(log) {
+        this.rawLog = log;
+        this.events = log.filter(e =>
+            [
+                "playground.engine_v1.CombatEvent.SkillUsed",
+                "playground.engine_v1.CombatEvent.DamageDealt",
+                "playground.engine_v1.CombatEvent.ResourceDrained",
+                "playground.engine_v1.CombatEvent.Healed"
+            ].includes(e.type)
+        );
+    },
 
-            updateActionLog(type);
+    play() {
+        if (this.playing) return;
+        this.playing = true;
+        this.scheduleNext();
+    },
 
-            switch (type) {
-                case "playground.engine_v1.CombatEvent.SkillUsed":
-                    animateSkillUsed(event);
-                    break;
-                case "playground.engine_v1.CombatEvent.DamageDealt":
-                    animateDamageDealt(event);
-                    break;
-                case "playground.engine_v1.CombatEvent.ResourceDrained":
-                    animateResourceDrained(event);
-                    break;
-                case "playground.engine_v1.CombatEvent.Healed":
-                    animateHeal(event);
-                    break;
-                case "playground.engine_v1.CombatEvent.BuffApplied":
-                case "playground.engine_v1.CombatEvent.BuffExpired":
-                case "playground.engine_v1.CombatEvent.TurnStart":
-                default: // No action
-                    break;
-            }
+    pause() {
+        this.playing = false;
+        if (this.timer) clearTimeout(this.timer);
+    },
 
-            // Replace status effect update with full actor display update
-            if (event.snapshot) {
-                updateAllActorDisplays(event.snapshot);
-            }
-        }, index * 400);
-    });
+    scheduleNext() {
+        if (!this.playing) return;
+        if (this.index >= this.events.length - 1) {
+            this.pause();
+            return;
+        }
+        this.stepForward(true);
+        this.timer = setTimeout(() => this.scheduleNext(), this.baseInterval / this.speed);
+    },
+
+    stepForward(withAnimation = true) {
+        if (this.index >= this.events.length - 1) return;
+        this.index++;
+        const evt = this.events[this.index];
+        executeEvent(evt, withAnimation);
+        if (evt.snapshot) updateAllActorDisplays(evt.snapshot);
+    },
+
+    stepBack() {
+        if (this.index < 0) return;
+        this.index--;
+        this.rebuildState();
+    },
+
+    rebuildState() {
+        // Clear logs
+        const logContainer = document.getElementById('action-log');
+        logContainer.innerHTML = '';
+
+        // Determine snapshot to use
+        const snap = this.findSnapshotForIndex(this.index);
+        if (snap) {
+            initializeActors(snap);
+            updateAllActorDisplays(snap);
+        } else if (this.initialSnapshot) {
+            initializeActors(this.initialSnapshot);
+        }
+
+        // Replay (log only, no animations) prior events for log context
+        for (let i = 0; i <= this.index; i++) {
+            const evt = this.events[i];
+            logEventSummary(evt);
+        }
+    },
+
+    findSnapshotForIndex(i) {
+        if (i < 0) return this.initialSnapshot;
+        for (let k = i; k >= 0; k--) {
+            if (this.events[k].snapshot) return this.events[k].snapshot;
+        }
+        return this.initialSnapshot;
+    },
+
+    setSpeed(mult) {
+        this.speed = mult;
+        if (this.playing) {
+            this.pause();
+            this.play();
+        }
+    }
+};
+
+// === Event Execution ===
+function logEventSummary(event) {
+    // Minimal summary used when rebuilding
+    switch (event.type) {
+        case "playground.engine_v1.CombatEvent.SkillUsed":
+            updateActionLog(`[Skill] ${event.actor} -> ${event.targets?.join(', ')}`);
+            break;
+        case "playground.engine_v1.CombatEvent.DamageDealt":
+            updateActionLog(`[Damage] ${event.actor || event.source} -> ${event.target}`);
+            break;
+        case "playground.engine_v1.CombatEvent.ResourceDrained":
+            updateActionLog(`[Effect] ${event.target} ${event.buffId}`);
+            break;
+        case "playground.engine_v1.CombatEvent.Healed":
+            updateActionLog(`[Heal] ${event.source || event.actor} -> ${event.target || event.targets?.join(', ')}`);
+            break;
+        default:
+            updateActionLog(event.type);
+    }
+}
+
+function executeEvent(event, animate = true) {
+    logEventSummary(event);
+    if (!animate) return;
+    switch (event.type) {
+        case "playground.engine_v1.CombatEvent.SkillUsed":
+            animateSkillUsed(event);
+            break;
+        case "playground.engine_v1.CombatEvent.DamageDealt":
+            animateDamageDealt(event);
+            break;
+        case "playground.engine_v1.CombatEvent.ResourceDrained":
+            animateResourceDrained(event);
+            break;
+        case "playground.engine_v1.CombatEvent.Healed":
+            animateHeal(event);
+            break;
+        default:
+            break;
+    }
 }
 
 // === Main Runner ===
 async function runAnimation() {
     const logData = await loadLog();
-    const initialSnapshot = logData.find(e => e.type === "playground.engine_v1.CombatEvent.TurnStart");
-
-    if (!initialSnapshot?.snapshot) {
+    const initialSnapshotEvent = logData.find(e => e.type === "playground.engine_v1.CombatEvent.TurnStart");
+    if (!initialSnapshotEvent?.snapshot) {
         console.error("Initial snapshot not found in log.");
         return;
     }
-
-    initializeActors(initialSnapshot.snapshot);
-    animateActions(logData);
+    playback.initialSnapshot = initialSnapshotEvent.snapshot;
+    initializeActors(playback.initialSnapshot);
+    playback.init(logData);
+    wireControls();
 }
 
-// Export createElement and updateActionLog for testing
+function wireControls() {
+    const btnPlay = document.getElementById('btn-play');
+    const btnPause = document.getElementById('btn-pause');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const speedSel = document.getElementById('play-speed');
+
+    btnPlay.onclick = () => playback.play();
+    btnPause.onclick = () => playback.pause();
+    btnPrev.onclick = () => playback.stepBack();
+    btnNext.onclick = () => playback.stepForward(true);
+    speedSel.onchange = e => playback.setSpeed(parseFloat(e.target.value));
+}
+
+// Export for testing
 if (typeof module !== 'undefined') {
     module.exports = {
         createElement,
