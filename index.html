@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="src/styles.css">
 </head>
 <body>
+<div class="controls">
+    <button id="btn-play">Play</button>
+    <button id="btn-pause">Pause</button>
+    <button id="btn-prev">Step Back</button>
+    <button id="btn-next">Step Forward</button>
+    <label>Speed:
+        <select id="play-speed">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+        </select>
+    </label>
+</div>
 <div class="layout">
     <div id="action-log" class="action-log"></div>
     <div class="battlefield">
