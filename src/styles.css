@@ -1,5 +1,8 @@
 :root {
     --portrait-size: 128px;
+    --panel-bg: linear-gradient(135deg, #23243a 60%, #3a2a4d 100%);
+    --accent-gradient: linear-gradient(135deg, #6e3a9e, #b46ef5 60%, #ffef2f 120%);
+    --accent-color: #ffef2f;
 }
 
 html, body { height:100%; }
@@ -183,6 +186,124 @@ body {
 
 .actor:hover .portrait {
     box-shadow: 0 0 16px #ffef2f;
+}
+
+/* === Controls Bar === */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    max-width: 1200px;
+    margin: 20px auto 0 auto;
+    padding: 14px 22px;
+    background: var(--panel-bg);
+    border: 2px solid #4e2a6e;
+    border-radius: 14px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.45), 0 0 18px rgba(110,58,158,0.35);
+    backdrop-filter: blur(6px);
+    font-family: 'Merriweather', serif;
+}
+
+.controls-left, .controls-right { display:flex; align-items:center; gap:12px; }
+
+.control-btn {
+    position: relative;
+    cursor: pointer;
+    border: 1.5px solid #6e3a9e;
+    background: radial-gradient(circle at 30% 30%, #3b2a55, #2a1e3f 70%);
+    color: #e8dcff;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    text-shadow: 0 0 6px #6e3a9e;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 0 10px rgba(110,58,158,0.4) inset;
+    transition: background 240ms, transform 140ms, box-shadow 240ms, color 240ms;
+}
+
+.control-btn:hover {
+    background: radial-gradient(circle at 30% 30%, #4b3472, #36264f 70%);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.55), 0 0 14px rgba(180,110,245,0.55) inset;
+}
+
+.control-btn:active { transform: translateY(2px) scale(0.97); }
+
+.control-btn:focus-visible {
+    outline: 2px solid #ffef2f;
+    outline-offset: 2px;
+}
+
+/* State variations */
+#btn-toggle-play.is-playing {
+    background: linear-gradient(135deg, #d45555, #9e2f2f);
+    border-color: #ff9393;
+    box-shadow: 0 0 12px rgba(255,120,120,0.6), 0 3px 14px rgba(0,0,0,0.5);
+}
+#btn-toggle-play.is-playing:hover {
+    background: linear-gradient(135deg, #ff6666, #b53636);
+}
+
+#btn-toggle-play.is-ended {
+    background: linear-gradient(135deg, #4a7d2f, #2f5a20);
+    border-color: #7de05a;
+    box-shadow: 0 0 12px rgba(100,255,140,0.55), 0 3px 14px rgba(0,0,0,0.5);
+}
+#btn-toggle-play.is-ended:hover {
+    background: linear-gradient(135deg, #5e9b3d, #3b752a);
+}
+
+/* Subtle pulsing glow when idle Play state */
+#btn-toggle-play:not(.is-playing):not(.is-ended) {
+    animation: playIdlePulse 2400ms ease-in-out infinite;
+}
+
+@keyframes playIdlePulse {
+    0%, 100% { box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 0 10px rgba(110,58,158,0.4) inset; }
+    50% { box-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 0 16px rgba(255,239,47,0.5) inset; }
+}
+
+.speed-label { display:flex; flex-direction:column; gap:4px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.12em; color:#cbb4f5; }
+.speed-select {
+    background: #2d2142;
+    color: #e8dcff;
+    border: 1.5px solid #6e3a9e;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 8px rgba(110,58,158,0.35) inset;
+    transition: border-color 200ms, box-shadow 220ms, background 200ms;
+}
+.speed-select:hover { border-color:#b46ef5; }
+.speed-select:focus { outline:none; border-color:#ffef2f; box-shadow:0 0 0 3px rgba(255,239,47,0.35); }
+
+/* Compact layout on narrow screens */
+@media (max-width: 900px) {
+    .controls { flex-wrap: wrap; gap: 14px; padding: 12px 16px; }
+    .controls-left { flex: 1 1 100%; justify-content: center; }
+    .controls-right { flex: 1 1 100%; justify-content: center; }
+}
+
+@media (max-width: 520px) {
+    .control-btn { flex:1; padding:9px 10px; font-size:0.8rem; }
+    .controls { padding: 10px 12px; }
+    .speed-label { font-size:0.65rem; }
+}
+
+/* High-contrast preference support */
+@media (prefers-contrast: more) {
+    .control-btn { border-width:2px; }
+    .controls { box-shadow: 0 0 0 3px #6e3a9e; }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    #btn-toggle-play:not(.is-playing):not(.is-ended) { animation:none; }
+    .control-btn, .portrait, .health-bar { transition: none !important; }
 }
 
 @media (max-width: 900px) {
