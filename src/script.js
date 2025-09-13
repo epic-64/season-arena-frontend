@@ -123,14 +123,12 @@ function initializeActors(snapshot) {
             classes: ['health-bar'],
             styles: { width: `${(actor.hp / actor.maxHp) * 100}%` }
         });
-
         const statusEffects = createElement('div', { classes: ['status-effects'] });
-
         const healthBarContainer = createElement('div', { classes: ['health-bar-container'] });
-        healthBarContainer.append(healthBar, statusEffects);
-
+        healthBarContainer.append(healthBar); // keep only bar inside to avoid hiding effects
         actorDiv.appendChild(portraitImg);
         actorDiv.appendChild(healthBarContainer);
+        actorDiv.appendChild(statusEffects); // below bar, visible (container has overflow hidden)
 
         (actor.team === 0 ? heroes : enemies).appendChild(actorDiv);
     });
@@ -624,6 +622,8 @@ async function runAnimation() {
     }
     playback.initialSnapshot = initialSnapshotEvent.snapshot;
     initializeActors(playback.initialSnapshot);
+    // Ensure status effects (statBuffs, resourceTicks) render immediately
+    updateAllActorDisplays(playback.initialSnapshot);
     playback.init(logData);
     wireControls();
     // Auto-play by default
