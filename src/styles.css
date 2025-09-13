@@ -43,7 +43,7 @@ body { overflow-y:hidden; }
     gap: 28px;
     width: 100%;
     max-width: 1200px;
-    margin: 40px auto 0 auto;
+    margin: 20px auto;
     padding: 0 16px;
     box-sizing: border-box;
 }
