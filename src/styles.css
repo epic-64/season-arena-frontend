@@ -48,8 +48,10 @@ body { overflow-y:hidden; }
 .battlefield {
     display: flex;
     justify-content: space-around;
-    width: 90%;
-    max-width: 700px;
+    /* Replaced problematic width:90% with flexible sizing to coexist with fixed left column */
+    flex: 1 1 700px; /* grow to fill remaining space, start from 700px ideal */
+    max-width: 700px; /* retain previous visual cap */
+    min-width: 0; /* allow shrinking without overflow in tight widths */
     position: relative;
     background: var(--panel-bg);
     border-radius: 18px;
@@ -462,10 +464,10 @@ body::before {
 .left-column {
     display: flex;
     flex-direction: column;
-    width: 360px;
-    max-width: 360px;
-    flex-shrink: 0;
+    /* Replace fixed width/max-width with a flex-basis to participate cleanly in flex layout */
+    flex: 0 0 360px;
 }
 .left-column .controls { margin: 0 0 14px 0; width: 100%; }
 .left-column .action-log { margin: 0; width: 100%; max-width: 100%; }
-
+/* Ensure padding + border do not cause overflow beyond the left column width */
+.left-column .controls, .left-column .action-log { box-sizing: border-box; }
