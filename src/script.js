@@ -326,35 +326,7 @@ function animateDamageDealt(event) {
     targetEl.classList.add('flicker');
     setTimeout(() => targetEl.classList.remove('flicker'), 450);
 
-    // Show damage effect emoji above target
-    const damageEmoji = createElement('div', {
-        text: '💥',
-        styles: {
-            fontSize: '2em',
-            position: 'absolute',
-            left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
-            top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
-            transition: 'opacity 0.7s, transform 0.7s',
-            opacity: 1,
-            pointerEvents: 'none'
-        }
-    });
-    document.body.appendChild(damageEmoji);
-    setTimeout(() => {
-        damageEmoji.style.transform = 'translateY(-30px)';
-        damageEmoji.style.opacity = 0;
-    }, 100);
-    setTimeout(() => {
-        damageEmoji.remove();
-    }, 800);
-
-    // === Enhanced Logging (no derived calculations, only direct event fields) ===
     try {
-        const actorData = event.snapshot.actors.find(a => a.name === event.target);
-        const sourceName = event.source || event.actor || 'Unknown';
-        const targetName = event.target || 'Unknown';
-        const maxHp = actorData?.maxHp;
-        const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
         let damageVal = event['amount'];
         if (typeof damageVal !== 'number') {
             for (const f of ['damage','value','delta','deltaHp','hpChange']) {
@@ -373,32 +345,6 @@ function animateDamageDealt(event) {
 function animateResourceDrained(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
     if (!targetEl) return;
-
-    // Show effect emoji above target for resource drain, heal, or DoT
-    let effectEmojiText = statusEmojis[event.buffId] || '✨';
-    const effectEmoji = createElement('div', {
-        text: effectEmojiText,
-        styles: {
-            fontSize: '2em',
-            position: 'absolute',
-            left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
-            top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
-            transition: 'opacity 0.7s, transform 0.7s',
-            opacity: 1,
-            pointerEvents: 'none'
-        }
-    });
-    document.body.appendChild(effectEmoji);
-
-    // Animate upward and fade out
-    setTimeout(() => {
-        effectEmoji.style.transform = 'translateY(-30px)';
-        effectEmoji.style.opacity = 0;
-    }, 100);
-
-    setTimeout(() => {
-        effectEmoji.remove();
-    }, 800);
 
     // Attempt to show numeric change if present
     try {
@@ -423,36 +369,7 @@ function animateResourceDrained(event) {
 }
 
 function animateHeal(event) {
-    // Removed obsolete health bar update logic
     try {
-        if (!event.target || typeof event.targetHp === 'undefined' || !event.snapshot) {
-            // Still attempt to log if minimal fields exist
-        } else {
-            const targetEl = document.getElementById(`actor-${event.target}`);
-            if (targetEl) {
-                const healEmoji = createElement('div', {
-                    text: '🍎',
-                    styles: {
-                        fontSize: '2em',
-                        position: 'absolute',
-                        left: `${targetEl.getBoundingClientRect().left + window.scrollX + 20}px`,
-                        top: `${targetEl.getBoundingClientRect().top + window.scrollY - 30}px`,
-                        transition: 'opacity 0.7s, transform 0.7s',
-                        opacity: 1,
-                        pointerEvents: 'none'
-                    }
-                });
-                document.body.appendChild(healEmoji);
-                setTimeout(() => {
-                    healEmoji.style.transform = 'translateY(-30px)';
-                    healEmoji.style.opacity = 0;
-                }, 100);
-                setTimeout(() => {
-                    healEmoji.remove();
-                }, 800);
-            }
-        }
-
         let healAmount;
         for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
             if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { healAmount = event[f]; break; }
