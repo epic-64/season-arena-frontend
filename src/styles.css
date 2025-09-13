@@ -23,8 +23,7 @@
 html { box-sizing: border-box; }
 *, *::before, *::after { box-sizing: inherit; }
 
-html, body { height:100%; }
-body { overflow-y:hidden; }
+body { margin: 0; padding: 0; }
 
 .layout {
     display: flex;
@@ -33,8 +32,8 @@ body { overflow-y:hidden; }
     gap: 28px;
     width: 100%;
     max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 16px;
+    margin: 0 auto;
+    padding: 40px 16px;
     box-sizing: border-box;
 }
 
@@ -485,8 +484,6 @@ body::before {
     .action-log { font-size: 0.95em; padding: 6px; }
     .actor { font-size: 1.1em; padding: 4px 6px; }
 }
-
-@media (max-height: 700px) { body { overflow-y:auto; } }
 
 .left-column {
     display: flex;
