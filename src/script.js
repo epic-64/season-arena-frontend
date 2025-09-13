@@ -197,6 +197,12 @@ function initializeActors(snapshot) {
         portraitImg.src = getPortraitSrc(actor.name);
         portraitImg.alt = actor.name;
 
+        // Name plate (new)
+        const namePlate = createElement('div', {
+            text: actor.name,
+            classes: ['actor-name']
+        });
+
         const healthBar = createElement('div', {
             classes: ['health-bar'],
             styles: { width: `${(actor.hp / actor.maxHp) * 100}%` }
@@ -205,6 +211,7 @@ function initializeActors(snapshot) {
         const healthBarContainer = createElement('div', { classes: ['health-bar-container'] });
         healthBarContainer.append(healthBar); // keep only bar inside to avoid hiding effects
         actorDiv.appendChild(portraitImg);
+        actorDiv.appendChild(namePlate);
         actorDiv.appendChild(healthBarContainer);
         actorDiv.appendChild(statusEffects); // below bar, visible (container has overflow hidden)
 

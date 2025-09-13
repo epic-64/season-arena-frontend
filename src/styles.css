@@ -267,6 +267,23 @@ body::before {
     transition: box-shadow 0.3s;
 }
 
+/* Name plate under each portrait */
+.actor-name {
+    width: var(--portrait-size);
+    text-align: center;
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 0.45em; /* scaled against .actor font-size */
+    letter-spacing: 0.06em;
+    margin: 0 auto 6px auto;
+    color: var(--ink);
+    text-shadow: 0 0 4px rgba(0,0,0,0.85), 0 0 6px rgba(212,175,55,0.35);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none; /* purely informational */
+}
+
 /* === Controls Bar === */
 .controls {
     display: flex;
