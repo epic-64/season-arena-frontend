@@ -10,7 +10,7 @@
     --pop-heal: #32ffa6;
     /* Restored legacy bright bar colors */
     --health-bright-green: #2fff6e;
-    --health-bright-yellow: #ffef2f;
+    --health-deep-green: #8cff18;
     /* Toggle button semantic colors: Play (green), Pause (orange), Replay (blue) */
     --btn-play-start: #22c956;
     --btn-play-end: #0d7e29;
@@ -139,7 +139,7 @@ body { overflow-y:hidden; }
 .health-bar {
     height: 100%;
     display: flex;
-    background: linear-gradient(90deg, var(--health-bright-yellow) 0%, var(--health-bright-green) 100%);
+    background: linear-gradient(90deg, var(--health-deep-green) 0%, var(--health-bright-green) 100%);
     border-radius: 6px;
     box-shadow: 0 0 8px 0 var(--health-bright-green);
     transition: width 0.4s;
