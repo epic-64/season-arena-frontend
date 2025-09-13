@@ -4,18 +4,8 @@
     --panel-bg: linear-gradient(145deg, #2d2620 0%, #3a2f24 65%, #44362a 100%);
     --panel-accent-border: #6a5138;
     --accent-color: #d4af37; /* antique gold */
-    --accent-gradient: linear-gradient(135deg, #b88932 0%, #d4af37 55%, #f4e3a2 110%);
     --ember-glow: #ffb347;
-    --ember-deep: #b45524;
-    --blood-red: #7a1f1f;
-    --health-mid: #b5471c;
-    --health-highlight: #d4af37;
     --ink: #f2e6d2;
-    /* Vibrant (restored) pop colors */
-    --pop-health-red: #ff0033;
-    --pop-health-orange: #ff6d00;
-    --pop-health-yellow: #ffea00;
-    --pop-health-green: #3dff4d;
     --pop-damage: #ff2f55;
     --pop-heal: #32ffa6;
     /* Restored legacy bright bar colors */
