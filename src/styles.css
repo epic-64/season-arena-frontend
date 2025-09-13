@@ -273,7 +273,7 @@ body::before {
     text-align: center;
     font-family: 'Merriweather', serif;
     font-weight: 700;
-    font-size: 0.45em; /* scaled against .actor font-size */
+    font-size: 0.45em;
     letter-spacing: 0.06em;
     margin: 0 auto 6px auto;
     color: var(--ink);
@@ -281,8 +281,31 @@ body::before {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    pointer-events: none; /* purely informational */
+    pointer-events: none;
+    position: relative; /* banner effects */
+    padding: 4px 10px 5px 10px;
+    box-sizing: border-box;
+    background: linear-gradient(145deg,#5a4631 0%, #3e2f22 65%, #2e241b 100%);
+    border: 1px solid #8d6a43;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,230,160,0.08) inset, 0 0 8px rgba(212,175,55,0.3);
 }
+.actor-name:before,
+.actor-name:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 70%;
+    background: linear-gradient(145deg,#6a5138 0%, #4a392a 70%);
+    box-shadow: 0 0 4px rgba(0,0,0,0.6) inset;
+    filter: brightness(0.95);
+    z-index: -1; /* sit behind main banner body */
+    clip-path: polygon(0 0, 100% 10%, 100% 90%, 0 100%, 15% 50%);
+}
+.actor-name:before { left: -10px; }
+.actor-name:after { right: -10px; transform: translateY(-50%) scaleX(-1); }
 
 /* === Controls Bar === */
 .controls {
