@@ -95,6 +95,11 @@ body { overflow-y:hidden; }
     color: var(--ink);
     position: relative;
     border: 1.5px solid rgba(140,110,70,0.45);
+    /* New layout normalization */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px; /* unified vertical rhythm */
 }
 
 .strike {
@@ -135,7 +140,7 @@ body { overflow-y:hidden; }
     height: 12px;
     background: linear-gradient(90deg, #2a231d 0%, #382d25 100%);
     border-radius: 6px;
-    margin-top: 7px;
+    /* removed margin-top in favor of parent flex gap */
     border: 1px solid #6a5138;
     position: relative;
     overflow: hidden;
@@ -191,20 +196,21 @@ body { overflow-y:hidden; }
 
 .status-effects {
     display:flex;
-    margin-left:7px;
-    gap: 2px;
-    /* Reserve space so actor height stays constant even with 0 effects */
+    /* removed margin-left; rely on centering */
+    gap: 4px; /* slightly increased for clarity, replaces individual margins */
     height:30px; /* increased from 20px */
     min-height:30px; /* keep consistent */
     align-items:center;
     flex-wrap:nowrap;
     overflow:hidden; /* prevent wrapping from changing height */
     width: var(--portrait-size); /* match health bar width for stability */
+    margin:0; /* ensure no external offset */
+    padding:0;
 }
 
 .status-effect {
     font-size:20px; /* reduced from 1em so they fit inside 24px height */
-    margin-right:3px;
+    /* removed margin-right, gap handles spacing */
     filter: drop-shadow(0 0 2px rgba(212,175,55,0.9));
 }
 
@@ -259,7 +265,8 @@ body::before {
 
 .portrait {
     display: block;
-    margin: 0 auto 8px auto;
+    /* removed bottom margin; flex gap now controls spacing */
+    margin: 0;
     width: var(--portrait-size);
     height: var(--portrait-size);
     border-radius: 8px;
@@ -278,7 +285,8 @@ body::before {
     font-weight: 700;
     font-size: 0.45em;
     letter-spacing: 0.06em;
-    margin: 0 auto 6px auto;
+    /* removed auto margins; flex container centers */
+    margin: 0;
     color: var(--ink);
     text-shadow: 0 0 4px rgba(0,0,0,0.85), 0 0 6px rgba(212,175,55,0.35);
     white-space: nowrap;
