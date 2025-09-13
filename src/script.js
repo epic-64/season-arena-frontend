@@ -145,13 +145,12 @@ function logEventUnified(event) {
 function getPortraitSrc(actorName) {
     // Map actor names to portrait filenames
     const nameToFile = {
-        'Cleric': 'cleric.png',
-        'Fighter': 'fighter.png',
-        'Fishman': 'fishman.png',
         'Mage': 'mage.png',
+        'Cleric': 'druid.png',
+        'Fighter': 'hunter2.png',
         'Ratman': 'ratman.png',
+        'Fishman': 'fishman.png',
         'Scoundrel': 'scoundrel.png'
-        // Removed fixed Villain mapping to allow randomization
     };
 
     const lowerName = actorName.toLowerCase();
