@@ -193,12 +193,6 @@ function initializeActors(snapshot) {
         // Portrait image
         const portraitImg = createElement('img', {
             classes: ['portrait'],
-            styles: {
-                // width/height controlled by CSS for responsiveness
-                borderRadius: '8px',
-                objectFit: 'cover',
-                boxShadow: '0 0 8px #6e3a9e'
-            }
         });
         portraitImg.src = getPortraitSrc(actor.name);
         portraitImg.alt = actor.name;
