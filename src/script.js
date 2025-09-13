@@ -210,8 +210,8 @@ function initializeActors(snapshot) {
         const statusEffects = createElement('div', { classes: ['status-effects'] });
         const healthBarContainer = createElement('div', { classes: ['health-bar-container'] });
         healthBarContainer.append(healthBar); // keep only bar inside to avoid hiding effects
-        actorDiv.appendChild(portraitImg);
         actorDiv.appendChild(namePlate);
+        actorDiv.appendChild(portraitImg);
         actorDiv.appendChild(healthBarContainer);
         actorDiv.appendChild(statusEffects); // below bar, visible (container has overflow hidden)
 
