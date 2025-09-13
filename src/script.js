@@ -158,9 +158,7 @@ function getPortraitSrc(actorName) {
     // Special case: any name containing 'villain' randomizes among monster portraits
     if (lowerName.includes('villain')) {
         const villainOptions = [
-            //'ratman.png',
-            'fishman.png',
-            //'scoundrel.png'
+            'abyss_dragon.png',
         ];
         const file = villainOptions[Math.floor(Math.random() * villainOptions.length)];
         return `assets/images/portraits/${file}`;
