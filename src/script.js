@@ -319,13 +319,19 @@ function animateDamageDealt(event) {
         const targetName = event.target || 'Unknown';
         const maxHp = actorData?.maxHp;
         const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
-
-        // Attempt to locate a damage field without inferring or computing
         let damageVal = event['amount'];
-
+        if (typeof damageVal !== 'number') {
+            for (const f of ['damage','value','delta','deltaHp','hpChange']) {
+                if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { damageVal = event[f]; break; }
+            }
+        }
+        if (typeof damageVal === 'number') {
+            const shown = Math.abs(damageVal);
+            showFloatingNumber(targetEl, shown, 'damage');
+        }
         let messageParts = [];
         if (damageVal !== undefined) {
-            messageParts.push(`${sourceName} hits ${targetName} for ${damageVal} dmg`);
+            messageParts.push(`${sourceName} hits ${targetName} for ${Math.abs(damageVal)} dmg`);
         } else {
             messageParts.push(`${sourceName} affects ${targetName}`);
         }
@@ -334,7 +340,6 @@ function animateDamageDealt(event) {
         }
         updateActionLog(messageParts.join(' '));
     } catch (e) {
-        // Fail silently to avoid breaking animation if unexpected shape
         console.debug('Damage log enhancement skipped:', e);
     }
 }
@@ -369,6 +374,26 @@ function animateResourceDrained(event) {
         effectEmoji.remove();
     }, 800);
 
+    // Attempt to show numeric change if present
+    try {
+        let val;
+        for (const f of ['amount','value','delta','deltaHp','hpChange']) {
+            if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { val = event[f]; break; }
+        }
+        // Some events might nest resource changes
+        if (val === undefined && event.resourceChanges && typeof event.resourceChanges === 'object') {
+            if (typeof event.resourceChanges.hp === 'number') val = event.resourceChanges.hp;
+        }
+        if (typeof val === 'number') {
+            if (val < 0) {
+                showFloatingNumber(targetEl, Math.abs(val), 'damage');
+            } else if (val > 0) {
+                showFloatingNumber(targetEl, val, 'heal');
+            }
+        }
+    } catch (e) {
+        console.debug('Resource change number failed:', e);
+    }
     updateActionLog(`${event.target} affected by ${event.buffId}`);
 }
 
@@ -380,7 +405,6 @@ function animateHeal(event) {
         } else {
             const targetEl = document.getElementById(`actor-${event.target}`);
             if (targetEl) {
-                // Only show heal effect emoji above target
                 const healEmoji = createElement('div', {
                     text: '🍎',
                     styles: {
@@ -408,7 +432,11 @@ function animateHeal(event) {
         const target = event.target || (Array.isArray(event.targets) ? event.targets.join(', ') : 'Unknown');
         let healAmount;
         for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
-            if (Object.prototype.hasOwnProperty.call(event, f)) { healAmount = event[f]; break; }
+            if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { healAmount = event[f]; break; }
+        }
+        if (typeof healAmount === 'number' && healAmount !== 0) {
+            const targetEl2 = document.getElementById(`actor-${event.target}`);
+            if (targetEl2) showFloatingNumber(targetEl2, Math.abs(healAmount), 'heal');
         }
         let maxHp;
         if (event.snapshot && event.target) {
@@ -418,7 +446,7 @@ function animateHeal(event) {
         const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
         const parts = [];
         if (healAmount !== undefined) {
-            parts.push(`${healer} heals ${target} for ${healAmount}`);
+            parts.push(`${healer} heals ${target} for ${Math.abs(healAmount)}`);
         } else {
             parts.push(`${healer} heals ${target}`);
         }
@@ -429,6 +457,18 @@ function animateHeal(event) {
     } catch (e) {
         console.debug('Heal log skipped:', e);
     }
+}
+
+// Helper to show floating numbers for damage / heal
+function showFloatingNumber(actorEl, value, kind) {
+    if (!actorEl) return;
+    const num = createElement('div', {
+        text: value,
+        classes: ['floating-number', kind === 'damage' ? 'damage-number' : 'heal-number']
+    });
+    actorEl.appendChild(num);
+    // remove after animation ends
+    setTimeout(function() { if (num && num.parentNode) num.remove(); }, 1000);
 }
 
 // === Playback Controller ===

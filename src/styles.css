@@ -169,6 +169,30 @@ body { overflow-y:hidden; }
     filter: drop-shadow(0 0 2px #ffef2f);
 }
 
+/* Floating combat text numbers */
+.floating-number {
+    position:absolute;
+    left:50%;
+    top:0; /* start near top of actor card */
+    transform:translate(-50%,0);
+    font-weight:700;
+    font-size:0.6em; /* small relative to actor font-size */
+    text-shadow:0 0 4px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.3);
+    animation:floatNumber 1000ms ease-out forwards;
+    pointer-events:none;
+    z-index:5;
+    user-select:none;
+    white-space:nowrap;
+}
+.damage-number { color:#ff4a4a; filter:drop-shadow(0 0 3px #ff2f2f); }
+.heal-number { color:#4aff6e; filter:drop-shadow(0 0 3px #2fff6e); }
+
+@keyframes floatNumber {
+    0% { opacity:1; transform:translate(-50%,0) scale(0.9); }
+    40% { opacity:1; }
+    100% { opacity:0; transform:translate(-50%,-34px) scale(1.05); }
+}
+
 body {
     background: radial-gradient(ellipse at top, #1a1a2a 60%, #2a1a2a 100%);
     min-height: 100vh;
