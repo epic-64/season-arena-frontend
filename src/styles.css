@@ -29,6 +29,9 @@
     --btn-replay-start: #1f64d8;
     --btn-replay-end: #4aa3ff;
 }
+/* Global box-sizing reset for predictable layout sizing */
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
 
 html, body { height:100%; }
 body { overflow-y:hidden; }
@@ -148,8 +151,7 @@ body { overflow-y:hidden; }
 }
 
 .action-log {
-    width: 360px; /* widened from 280px */
-    max-width: 360px; /* widened from 280px */
+    /* Simplified: rely on column width; removed fixed 360px width */
     height: 500px; /* fixed height */
     overflow-y: auto;
     flex-shrink: 0;
@@ -464,10 +466,9 @@ body::before {
 .left-column {
     display: flex;
     flex-direction: column;
-    /* Replace fixed width/max-width with a flex-basis to participate cleanly in flex layout */
     flex: 0 0 360px;
+    min-width: 0; /* allow flex shrink without overflow */
 }
 .left-column .controls { margin: 0 0 14px 0; width: 100%; }
-.left-column .action-log { margin: 0; width: 100%; max-width: 100%; }
-/* Ensure padding + border do not cause overflow beyond the left column width */
-.left-column .controls, .left-column .action-log { box-sizing: border-box; }
+.left-column .action-log { margin: 0; }
+.left-column .controls, .left-column .action-log { }
