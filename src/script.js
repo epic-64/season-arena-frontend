@@ -635,7 +635,7 @@ function executeEvent(event, animate = true) {
 }
 
 // === Main Runner ===
-async function runAnimation() {
+async function runBattleApplication() {
     const logData = await loadLog();
     const initialSnapshotEvent = logData.find(e => e.type === "playground.engine_v1.CombatEvent.TurnStart");
     if (!initialSnapshotEvent?.snapshot) {
