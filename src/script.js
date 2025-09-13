@@ -214,52 +214,6 @@ function initializeActors(snapshot) {
     });
 }
 
-function updateStatusEffectsDisplay(actorName, resourceTicks, statBuffs) {
-    const container = document.querySelector(`#actor-${actorName} .status-effects`);
-    if (!container) return;
-    container.innerHTML = '';
-
-    // Helper: add effect span (shared for buffs and resource ticks)
-    function addEffect(id, duration, extraTooltip) {
-        if (!id) return;
-        const symbol = statusEmojis[id] || '✨';
-        // Append duration inline (only if > 1 to reduce noise)
-        const txt = duration && duration > 1 ? symbol + duration : symbol;
-        const effectEmoji = createElement('span', {
-            text: txt,
-            classes: ['status-effect']
-        });
-        if (extraTooltip) effectEmoji.title = extraTooltip;
-        container.appendChild(effectEmoji);
-    }
-
-    // Stat buffs (e.g., Protection). They modify stats for a number of turns.
-    if (Array.isArray(statBuffs)) {
-        statBuffs.forEach(buff => {
-            let tooltip;
-            try {
-                if (buff && buff.statChanges) tooltip = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
-            } catch (e) {
-                console.warn("Failed to generate buff tooltip:", e);
-            }
-            addEffect(buff.id, buff.duration, tooltip);
-        });
-    }
-
-    // Resource ticks (heal or damage over time). We only care about HP but display generic.
-    if (Array.isArray(resourceTicks)) {
-        resourceTicks.forEach(tick => {
-            let tooltip;
-            try {
-                if (tick && tick.resourceChanges) tooltip = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
-            } catch (e) {
-                console.warn("Failed to generate tick tooltip:", e);
-            }
-            addEffect(tick.id, tick.duration, tooltip);
-        });
-    }
-}
-
 function updateAllActorDisplays(snapshot) {
     if (!snapshot || !snapshot.actors) return;
     snapshot.actors.forEach(actor => {
@@ -407,16 +361,6 @@ function animateDamageDealt(event) {
             const shown = Math.abs(damageVal);
             showFloatingNumber(targetEl, shown, 'damage');
         }
-        let messageParts = [];
-        if (damageVal !== undefined) {
-            messageParts.push(`${sourceName} hits ${targetName} for ${Math.abs(damageVal)} dmg`);
-        } else {
-            messageParts.push(`${sourceName} affects ${targetName}`);
-        }
-        if (newHp !== undefined && maxHp !== undefined) {
-            messageParts.push(`HP: ${newHp}/${maxHp}`);
-        }
-        updateActionLog(messageParts.join(' '));
     } catch (e) {
         console.debug('Damage log enhancement skipped:', e);
     }
@@ -472,7 +416,6 @@ function animateResourceDrained(event) {
     } catch (e) {
         console.debug('Resource change number failed:', e);
     }
-    updateActionLog(`${event.target} affected by ${event.buffId}`);
 }
 
 function animateHeal(event) {
@@ -506,8 +449,6 @@ function animateHeal(event) {
             }
         }
 
-        const healer = event.source || event.actor || 'Unknown';
-        const target = event.target || (Array.isArray(event.targets) ? event.targets.join(', ') : 'Unknown');
         let healAmount;
         for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
             if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { healAmount = event[f]; break; }
@@ -516,22 +457,6 @@ function animateHeal(event) {
             const targetEl2 = document.getElementById(`actor-${event.target}`);
             if (targetEl2) showFloatingNumber(targetEl2, Math.abs(healAmount), 'heal');
         }
-        let maxHp;
-        if (event.snapshot && event.target) {
-            const actorData = event.snapshot.actors.find(a => a.name === event.target);
-            maxHp = actorData?.maxHp;
-        }
-        const newHp = typeof event.targetHp !== 'undefined' ? event.targetHp : undefined;
-        const parts = [];
-        if (healAmount !== undefined) {
-            parts.push(`${healer} heals ${target} for ${Math.abs(healAmount)}`);
-        } else {
-            parts.push(`${healer} heals ${target}`);
-        }
-        if (newHp !== undefined && maxHp !== undefined) {
-            parts.push(`HP: ${newHp}/${maxHp}`);
-        }
-        updateActionLog(parts.join(' '));
     } catch (e) {
         console.debug('Heal log skipped:', e);
     }
@@ -617,6 +542,7 @@ const playback = {
         if (this.index >= this.events.length - 1) return;
         this.index++;
         const evt = this.events[this.index];
+        logEventUnified(evt);
         executeEvent(evt, withAnimation);
         if (evt.snapshot) updateAllActorDisplays(evt.snapshot);
         if (this.index >= this.events.length - 1) {
@@ -650,7 +576,7 @@ const playback = {
         // Replay (log only, no animations) prior events for log context
         for (let i = 0; i <= this.index; i++) {
             const evt = this.events[i];
-            logEventSummary(evt);
+            logEventUnified(evt)
         }
         updatePlayToggleButton();
     },
@@ -688,29 +614,7 @@ function updatePlayToggleButton() {
     }
 }
 
-// === Event Execution ===
-function logEventSummary(event) {
-    // Minimal summary used when rebuilding
-    switch (event.type) {
-        case "playground.engine_v1.CombatEvent.SkillUsed":
-            updateActionLog(`[Skill] ${event.actor} -> ${event.targets?.join(', ')}`);
-            break;
-        case "playground.engine_v1.CombatEvent.DamageDealt":
-            updateActionLog(`[Damage] ${event.actor || event.source} -> ${event.target}`);
-            break;
-        case "playground.engine_v1.CombatEvent.ResourceDrained":
-            updateActionLog(`[Effect] ${event.target} ${event.buffId}`);
-            break;
-        case "playground.engine_v1.CombatEvent.Healed":
-            updateActionLog(`[Heal] ${event.source || event.actor} -> ${event.target || event.targets?.join(', ')}`);
-            break;
-        default:
-            updateActionLog(event.type);
-    }
-}
-
 function executeEvent(event, animate = true) {
-    logEventSummary(event);
     if (!animate) return;
     switch (event.type) {
         case "playground.engine_v1.CombatEvent.SkillUsed":
