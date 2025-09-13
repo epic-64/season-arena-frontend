@@ -136,17 +136,50 @@ function initializeActors(snapshot) {
     });
 }
 
-function updateStatusEffectsDisplay(actorName, resourceTicks) {
+function updateStatusEffectsDisplay(actorName, resourceTicks, statBuffs) {
     const container = document.querySelector(`#actor-${actorName} .status-effects`);
+    if (!container) return;
     container.innerHTML = '';
 
-    resourceTicks.forEach(tick => {
+    // Helper: add effect span (shared for buffs and resource ticks)
+    function addEffect(id, duration, extraTooltip) {
+        if (!id) return;
+        const symbol = statusEmojis[id] || '✨';
+        // Append duration inline (only if > 1 to reduce noise)
+        const txt = duration && duration > 1 ? symbol + duration : symbol;
         const effectEmoji = createElement('span', {
-            text: statusEmojis[tick.id],
+            text: txt,
             classes: ['status-effect']
         });
+        if (extraTooltip) effectEmoji.title = extraTooltip;
         container.appendChild(effectEmoji);
-    });
+    }
+
+    // Stat buffs (e.g., Protection). They modify stats for a number of turns.
+    if (Array.isArray(statBuffs)) {
+        statBuffs.forEach(buff => {
+            let tooltip;
+            try {
+                if (buff && buff.statChanges) tooltip = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
+            } catch (e) {
+                console.warn("Failed to generate buff tooltip:", e);
+            }
+            addEffect(buff.id, buff.duration, tooltip);
+        });
+    }
+
+    // Resource ticks (heal or damage over time). We only care about HP but display generic.
+    if (Array.isArray(resourceTicks)) {
+        resourceTicks.forEach(tick => {
+            let tooltip;
+            try {
+                if (tick && tick.resourceChanges) tooltip = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
+            } catch (e) {
+                console.warn("Failed to generate tick tooltip:", e);
+            }
+            addEffect(tick.id, tick.duration, tooltip);
+        });
+    }
 }
 
 function updateAllActorDisplays(snapshot) {
@@ -163,12 +196,36 @@ function updateAllActorDisplays(snapshot) {
         const statusEffects = actorDiv.querySelector('.status-effects');
         if (statusEffects) {
             statusEffects.innerHTML = '';
-            if (Array.isArray(actor.resourceTicks)) {
-                actor.resourceTicks.forEach(tick => {
+            // Stat buffs first for clarity, then resource ticks
+            if (Array.isArray(actor.statBuffs)) {
+                actor.statBuffs.forEach(buff => {
+                    const symbol = statusEmojis[buff.id] || '✨';
+                    const txt = buff.duration && buff.duration > 1 ? symbol + buff.duration : symbol;
                     const effectEmoji = createElement('span', {
-                        text: statusEmojis[tick.id],
+                        text: txt,
                         classes: ['status-effect']
                     });
+                    try {
+                        if (buff.statChanges) effectEmoji.title = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
+                    } catch (e) {
+                        // ignore
+                    }
+                    statusEffects.appendChild(effectEmoji);
+                });
+            }
+            if (Array.isArray(actor.resourceTicks)) {
+                actor.resourceTicks.forEach(tick => {
+                    const symbol = statusEmojis[tick.id] || '✨';
+                    const txt = tick.duration && tick.duration > 1 ? symbol + tick.duration : symbol;
+                    const effectEmoji = createElement('span', {
+                        text: txt,
+                        classes: ['status-effect']
+                    });
+                    try {
+                        if (tick.resourceChanges) effectEmoji.title = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
+                    } catch (e) {
+                        // ignore
+                    }
                     statusEffects.appendChild(effectEmoji);
                 });
             }
