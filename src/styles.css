@@ -31,7 +31,7 @@ body { margin: 0; padding: 0; }
     justify-content: center;
     gap: 28px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 40px 16px;
     box-sizing: border-box;
@@ -47,6 +47,10 @@ body { margin: 0; padding: 0; }
     box-shadow: 0 8px 28px 0 rgba(0,0,0,0.5);
     border: 2px solid var(--panel-accent-border);
     padding: 32px;
+    width: 100vw;
+    max-width: 1800px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* Subtle parchment / worn overlay */
@@ -69,8 +73,10 @@ body { margin: 0; padding: 0; }
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
-    gap: 38px;
+    gap: 12px;
     width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
     position: relative;
 }
 
@@ -93,7 +99,7 @@ body { margin: 0; padding: 0; }
     justify-content: center;
     align-items: flex-end;
     min-width: 120px;
-    max-width: 320px;
+    max-width: none;
 }
 
 .actor {
