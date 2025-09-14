@@ -9,16 +9,20 @@ const skillEmojis = {
     "Spark": "✨",
     "Regeneration": "💞",
     "Flash Heal": "💊",
-    "Group Heal": "💞"
+    "Group Heal": "💞",
+    "Ice Shot": "❄️🏹",
+    "Black Hole": "💫",
 };
 
 const statusEmojis = {
     "Poison": "🧪",
     "Burn": "🔥",
     "Burning": "🔥",
+    "Shock": "🌩️",
     "Shocked": "🌩️",
     "Bleeding": "🩸",
     "Stunned": "💫",
+    "Chill": "🧊",
     "Chilled": "🧊",
     "Frozen": "❄️",
     "Regen": "💖",
@@ -26,12 +30,14 @@ const statusEmojis = {
     "Boost": "⏫",
     "Weaken": "⏬",
     "Slow": "🐢",
+    "Amplify": "🔺",
+    "Aimed": "🔺",
 };
 
 // === Utility Functions ===
 async function loadLog() {
     try {
-        const response = await fetch('src/log.json');
+        const response = await fetch('src/log2.json');
         return await response.json();
     } catch (error) {
         console.error('Error loading log:', error);
@@ -151,27 +157,21 @@ function logEventUnified(event) {
 }
 
 // === Actor Setup ===
-function getPortraitSrc(actorName) {
+function getPortraitSrc(actorClass) {
     // Map actor names to portrait filenames
     const nameToFile = {
         'Mage': 'mage.png',
         'Cleric': 'druid.png',
-        'Fighter': 'hunter2.png',
+        'Hunter': 'hunter2.png',
         'Ratman': 'ratman.png',
         'Fishman': 'fishman.png',
-        'Scoundrel': 'scoundrel.png'
+        'Scoundrel': 'scoundrel.png',
+        'Bard': 'bard.png',
+        'AbyssalDragon': 'abyss_dragon.png',
+        'Paladin': 'paladin.png',
     };
 
-    const lowerName = actorName.toLowerCase();
-
-    // Special case: any name containing 'villain' randomizes among monster portraits
-    if (lowerName.includes('villain')) {
-        const villainOptions = [
-            'abyss_dragon.png',
-        ];
-        const file = villainOptions[Math.floor(Math.random() * villainOptions.length)];
-        return `assets/images/portraits/${file}`;
-    }
+    const lowerName = actorClass.toLowerCase();
 
     // Generic containment lookup
     let file = 'cleric.png'; // default
@@ -200,8 +200,8 @@ function initializeActors(snapshot) {
         const portraitImg = createElement('img', {
             classes: ['portrait'],
         });
-        portraitImg.src = getPortraitSrc(actor.name);
-        portraitImg.alt = actor.name;
+        portraitImg.src = getPortraitSrc(actor.actorClass);
+        portraitImg.alt = actor.actorClass;
 
         // Name plate (new)
         const namePlate = createElement('div', {
