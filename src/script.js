@@ -9,14 +9,23 @@ const skillEmojis = {
     "Spark": "✨",
     "Regeneration": "💞",
     "Flash Heal": "💊",
-    "Group Heal": "👥💞"
+    "Group Heal": "💞"
 };
 
 const statusEmojis = {
     "Poison": "🧪",
     "Burn": "🔥",
+    "Burning": "🔥",
+    "Shocked": "🌩️",
+    "Bleeding": "🩸",
+    "Stunned": "💫",
+    "Chilled": "🧊",
+    "Frozen": "❄️",
     "Regen": "💖",
-    "Protection": "🛡️"
+    "Protection": "🛡️",
+    "Boost": "⏫",
+    "Weaken": "⏬",
+    "Slow": "🐢",
 };
 
 // === Utility Functions ===
