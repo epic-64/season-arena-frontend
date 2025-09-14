@@ -46,7 +46,7 @@ body { margin: 0; padding: 0; }
     border-radius: 18px;
     box-shadow: 0 8px 28px 0 rgba(0,0,0,0.5);
     border: 2px solid var(--panel-accent-border);
-    padding: 32px 0;
+    padding: 32px;
 }
 
 /* Subtle parchment / worn overlay */
