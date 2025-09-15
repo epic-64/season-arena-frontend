@@ -10,6 +10,7 @@ const skillEmojis = {
     "Regeneration": "💞",
     "Flash Heal": "💊",
     "Group Heal": "💞",
+    "Ice Lance": "☄️❄️",
     "Ice Shot": "❄️🏹",
     "Black Hole": "💫",
 };
