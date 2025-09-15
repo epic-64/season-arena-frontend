@@ -98,8 +98,9 @@ body { margin: 0; padding: 0; }
     gap: 28px;
     justify-content: center;
     align-items: flex-end;
-    min-width: 120px;
-    max-width: none;
+    flex: 1 1 0;
+    min-width: 0;
+    /* Remove max-width and min-width constraints for perfect even division */
 }
 
 .actor {
