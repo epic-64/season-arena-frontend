@@ -227,7 +227,7 @@ body { margin: 0; padding: 0; }
 
 .status-effect {
     font-size:20px;
-    filter: drop-shadow(0 0 2px rgba(212,175,55,0.9));
+    /* filter: drop-shadow(0 0 2px rgba(212,175,55,0.9)); */
     position: relative; /* Needed for overlay positioning */
 }
 
@@ -571,3 +571,16 @@ body::before {
 }
 .left-column .controls { margin: 0 0 14px 0; width: 100%; }
 .left-column .action-log { margin: 0; }
+
+/* Buff animation for status effects */
+.buff-animate {
+    animation: buffPulse 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px 4px var(--accent-color), 0 0 0 2px #fffbe6;
+    filter: brightness(1.25) drop-shadow(0 0 6px var(--accent-color));
+}
+@keyframes buffPulse {
+    0% { transform: scale(1); opacity: 1; }
+    30% { transform: scale(1.25); opacity: 1; }
+    60% { transform: scale(1.1); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+}

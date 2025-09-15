@@ -398,6 +398,29 @@ function animateHeal(event) {
     }
 }
 
+function animateBuffApplied(event) {
+    if (!event || !event.target || !event.buffId) return;
+    const actorDiv = document.getElementById(`actor-${event.target}`);
+    if (!actorDiv) return;
+    const statusEffects = actorDiv.querySelector('.status-effects');
+    if (!statusEffects) return;
+    // Find all buff emoji elements matching the buff id
+    const buffEmojis = Array.from(statusEffects.querySelectorAll('.status-effect'));
+    let found = false;
+    buffEmojis.forEach(el => {
+        // Match by emoji symbol (since that's how they're rendered)
+        if (el.textContent && el.textContent.includes(statusEmojis[event.buffId] || event.buffId)) {
+            el.classList.add('buff-animate');
+            found = true;
+            console.log('Buff animation triggered for:', event.buffId, 'on', el);
+            setTimeout(() => el.classList.remove('buff-animate'), 700);
+        }
+    });
+    if (!found) {
+        console.log('Buff emoji not found for:', event.buffId, 'in', statusEffects);
+    }
+}
+
 // Helper to show floating numbers for damage / heal
 function showFloatingNumber(actorEl, value, kind) {
     if (!actorEl) return;
@@ -566,6 +589,9 @@ function executeEvent(event, animate = true) {
         case "playground.engine_v1.CombatEvent.Healed":
             animateHeal(event);
             break;
+        case "playground.engine_v1.CombatEvent.BuffApplied":
+            animateBuffApplied(event);
+            break;
         default:
             break;
     }
@@ -610,3 +636,4 @@ if (typeof module !== 'undefined') {
         updateActionLog
     };
 }
+
