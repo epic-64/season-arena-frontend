@@ -243,13 +243,21 @@ function updateAllActorDisplays(snapshot) {
             if (Array.isArray(actor.statBuffs)) {
                 actor.statBuffs.forEach(buff => {
                     const symbol = statusEmojis[buff.id] || '✨';
-                    const txt = buff.duration && buff.duration > 1 ? symbol + buff.duration : symbol;
                     const effectEmoji = createElement('span', {
-                        text: txt,
                         classes: ['status-effect']
                     });
+                    effectEmoji.textContent = symbol;
+                    if (buff.duration) {
+                        const durationSpan = createElement('span', {
+                            classes: ['effect-duration']
+                        });
+                        durationSpan.textContent = buff.duration;
+                        effectEmoji.appendChild(durationSpan);
+                    }
                     try {
-                        if (buff.statChanges) effectEmoji.title = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
+                        if (buff.statChanges) {
+                            effectEmoji.title = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
+                        }
                     } catch (e) {
                         // ignore
                     }
@@ -259,13 +267,21 @@ function updateAllActorDisplays(snapshot) {
             if (Array.isArray(actor.resourceTicks)) {
                 actor.resourceTicks.forEach(tick => {
                     const symbol = statusEmojis[tick.id] || '✨';
-                    const txt = tick.duration && tick.duration > 1 ? symbol + tick.duration : symbol;
                     const effectEmoji = createElement('span', {
-                        text: txt,
                         classes: ['status-effect']
                     });
+                    effectEmoji.textContent = symbol;
+                    if (tick.duration) {
+                        const durationSpan = createElement('span', {
+                            classes: ['effect-duration']
+                        });
+                        durationSpan.textContent = tick.duration;
+                        effectEmoji.appendChild(durationSpan);
+                    }
                     try {
-                        if (tick.resourceChanges) effectEmoji.title = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
+                        if (tick.resourceChanges) {
+                            effectEmoji.title = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
+                        }
                     } catch (e) {
                         // ignore
                     }

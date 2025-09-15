@@ -226,9 +226,25 @@ body { margin: 0; padding: 0; }
 }
 
 .status-effect {
-    font-size:20px; /* reduced from 1em so they fit inside 24px height */
-    /* removed margin-right, gap handles spacing */
+    font-size:20px;
     filter: drop-shadow(0 0 2px rgba(212,175,55,0.9));
+    position: relative; /* Needed for overlay positioning */
+}
+
+.effect-duration {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    font-size: 0.65em;
+    font-weight: bold;
+    color: #fffbe6;
+    background: rgba(0,0,0,0.55);
+    border-radius: 6px;
+    padding: 0 3px;
+    line-height: 1.1;
+    pointer-events: none;
+    text-shadow: 0 0 4px #d4af37, 0 0 2px #000;
+    z-index: 2;
 }
 
 /* Floating combat text numbers */
