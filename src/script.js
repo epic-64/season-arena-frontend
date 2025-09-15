@@ -163,12 +163,12 @@ function getPortraitSrc(actorClass) {
         'Mage': 'mage.png',
         'Cleric': 'druid.png',
         'Hunter': 'hunter2.png',
+        'Paladin': 'paladin.png',
+        'Bard': 'bard.png',
         'Ratman': 'ratman.png',
         'Fishman': 'fishman.png',
         'Scoundrel': 'scoundrel.png',
-        'Bard': 'bard.png',
         'AbyssalDragon': 'abyss_dragon.png',
-        'Paladin': 'paladin.png',
     };
 
     const lowerName = actorClass.toLowerCase();
