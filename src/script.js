@@ -245,6 +245,17 @@ function renderStatusEffects(container, effects, getTitle) {
         });
         effectEmoji.textContent = symbol;
 
+        // value indicator (top left)
+        const value = 0; // todo: parse actual value from statusEffect
+        if (value) {
+            const valueSpan = createElement('span', {
+                classes: ['effect-value']
+            });
+            valueSpan.textContent = value;
+            effectEmoji.appendChild(valueSpan);
+        }
+
+        // Duration indicator (bottom right)
         if (effect.duration) {
             const durationSpan = createElement('span', {
                 classes: ['effect-duration']
@@ -612,4 +623,3 @@ if (typeof module !== 'undefined') {
         updateActionLog
     };
 }
-
