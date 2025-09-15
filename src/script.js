@@ -409,6 +409,20 @@ function animateHeal(event) {
     }
 }
 
+function animateBuffApplied(event) {
+    // Find the target actor's statusEffects container
+    const actorDiv = document.getElementById(`actor-${event.target}`);
+    if (!actorDiv) return;
+    const statusEffects = actorDiv.querySelector('.status-effects');
+    if (!statusEffects) return;
+    // Add animation class
+    statusEffects.classList.add('buff-animate');
+    statusEffects.addEventListener('animationend', function handler() {
+        statusEffects.classList.remove('buff-animate');
+        statusEffects.removeEventListener('animationend', handler);
+    });
+}
+
 // Helper to show floating numbers for damage / heal
 function showFloatingNumber(actorEl, value, kind) {
     if (!actorEl) return;
@@ -578,6 +592,7 @@ function executeEvent(event, animate = true) {
             animateHeal(event);
             break;
         case "playground.engine_v1.CombatEvent.BuffApplied":
+            animateBuffApplied(event);
             break;
         default:
             break;
