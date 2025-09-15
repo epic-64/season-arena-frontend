@@ -225,6 +225,34 @@ function initializeActors(snapshot) {
     });
 }
 
+function renderStatusEffects(container, effects, getTitle) {
+    if (!Array.isArray(effects)) return;
+    effects.forEach(effect => {
+        const symbol = statusEmojis[effect.id] || '✨';
+        const effectEmoji = createElement('span', {
+            classes: ['status-effect']
+        });
+        effectEmoji.textContent = symbol;
+
+        if (effect.duration) {
+            const durationSpan = createElement('span', {
+                classes: ['effect-duration']
+            });
+            durationSpan.textContent = effect.duration;
+            effectEmoji.appendChild(durationSpan);
+        }
+
+        try {
+            if (getTitle) {
+                effectEmoji.title = getTitle(effect);
+            }
+        } catch (e) {
+            console.error('Error generating effect title:', e);
+        }
+        container.appendChild(effectEmoji);
+    });
+}
+
 function updateAllActorDisplays(snapshot) {
     if (!snapshot || !snapshot.actors) return;
     snapshot.actors.forEach(actor => {
@@ -239,55 +267,8 @@ function updateAllActorDisplays(snapshot) {
         const statusEffects = actorDiv.querySelector('.status-effects');
         if (statusEffects) {
             statusEffects.innerHTML = '';
-            // Stat buffs first for clarity, then resource ticks
-            if (Array.isArray(actor.statBuffs)) {
-                actor.statBuffs.forEach(buff => {
-                    const symbol = statusEmojis[buff.id] || '✨';
-                    const effectEmoji = createElement('span', {
-                        classes: ['status-effect']
-                    });
-                    effectEmoji.textContent = symbol;
-                    if (buff.duration) {
-                        const durationSpan = createElement('span', {
-                            classes: ['effect-duration']
-                        });
-                        durationSpan.textContent = buff.duration;
-                        effectEmoji.appendChild(durationSpan);
-                    }
-                    try {
-                        if (buff.statChanges) {
-                            effectEmoji.title = `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)`;
-                        }
-                    } catch (e) {
-                        // ignore
-                    }
-                    statusEffects.appendChild(effectEmoji);
-                });
-            }
-            if (Array.isArray(actor.resourceTicks)) {
-                actor.resourceTicks.forEach(tick => {
-                    const symbol = statusEmojis[tick.id] || '✨';
-                    const effectEmoji = createElement('span', {
-                        classes: ['status-effect']
-                    });
-                    effectEmoji.textContent = symbol;
-                    if (tick.duration) {
-                        const durationSpan = createElement('span', {
-                            classes: ['effect-duration']
-                        });
-                        durationSpan.textContent = tick.duration;
-                        effectEmoji.appendChild(durationSpan);
-                    }
-                    try {
-                        if (tick.resourceChanges) {
-                            effectEmoji.title = `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)`;
-                        }
-                    } catch (e) {
-                        // ignore
-                    }
-                    statusEffects.appendChild(effectEmoji);
-                });
-            }
+            renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
+            renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
         }
         // You can add more updates here (e.g., cooldowns, buffs, etc.)
     });
