@@ -90,11 +90,21 @@ function formatEventLog(event) {
             return undefined;
         };
         switch (type) {
+            case "playground.engine_v1.CombatEvent.TurnStart": {
+                return `--- Turn ${event.turn} ---`;
+            }
             case "playground.engine_v1.CombatEvent.SkillUsed": {
                 const actor = event.actor || 'Unknown';
                 const skill = event.skill || 'Skill';
                 const targets = Array.isArray(event.targets) ? event.targets.join(', ') : (event.targets || 'Unknown');
                 return `${actor} uses ${skill} on ${targets}`;
+            }
+            case "playground.engine_v1.CombatEvent.BuffApplied": {
+                // source, target, buffId
+                const source = event.source;
+                const target = event.target;
+                const buff = event.buffId;
+                return `${source} applies ${buff} to ${target}`;
             }
             case "playground.engine_v1.CombatEvent.DamageDealt": {
                 const source = event.actor || event.source || 'Unknown';
@@ -153,7 +163,8 @@ function formatEventLog(event) {
 }
 
 function logEventUnified(event) {
-    updateActionLog(formatEventLog(event));
+    let logMessage = formatEventLog(event);
+    updateActionLog(logMessage);
 }
 
 // === Actor Setup ===
@@ -412,14 +423,15 @@ const playback = {
 
     init(log) {
         this.rawLog = log;
-        this.events = log.filter(e =>
-            [
-                "playground.engine_v1.CombatEvent.SkillUsed",
-                "playground.engine_v1.CombatEvent.DamageDealt",
-                "playground.engine_v1.CombatEvent.ResourceDrained",
-                "playground.engine_v1.CombatEvent.Healed"
-            ].includes(e.type)
-        );
+        // this.events = log.filter(e =>
+        //     [
+        //         "playground.engine_v1.CombatEvent.SkillUsed",
+        //         "playground.engine_v1.CombatEvent.DamageDealt",
+        //         "playground.engine_v1.CombatEvent.ResourceDrained",
+        //         "playground.engine_v1.CombatEvent.Healed"
+        //     ].includes(e.type)
+        // );
+        this.events = log; // Use full log for context
     },
 
     play() {
