@@ -235,16 +235,16 @@ const playback = {
             this.pause();
             return; // updatePlayToggleButton already called in pause
         }
-        this.stepForward(true);
+        this.stepForward();
         this.timer = setTimeout(() => this.scheduleNext(), this.baseInterval / this.speed);
     },
 
-    stepForward(withAnimation = true) {
+    stepForward() {
         if (this.index >= this.events.length - 1) return;
         this.index++;
         const evt = this.events[this.index];
         logEventUnified(evt);
-        executeEvent(evt, withAnimation);
+        executeEvent(evt);
         if (evt.snapshot) {
             updateAllActorDisplays(evt.snapshot);
         }
@@ -317,8 +317,7 @@ function updatePlayToggleButton() {
     }
 }
 
-function executeEvent(event, animate = true) {
-    if (!animate) return;
+function executeEvent(event) {
     switch (event.type) {
         case "playground.engine_v1.CombatEvent.SkillUsed":
             animateSkillUsed(event);
@@ -366,7 +365,7 @@ function wireControls() {
 
     btnToggle.onclick = () => playback.toggle();
     btnPrev.onclick = () => playback.stepBack();
-    btnNext.onclick = () => playback.stepForward(true);
+    btnNext.onclick = () => playback.stepForward();
     speedSel.onchange = e => playback.setSpeed(parseFloat(e.target.value));
 
     updatePlayToggleButton();
