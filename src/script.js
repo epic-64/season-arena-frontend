@@ -152,36 +152,43 @@ function updateAllActorDisplays(snapshot) {
  */
 function updateActorDisplay(actor) {
     const actorDiv = document.getElementById(`actor-${actor.name}`);
-    if (!actorDiv) return;
+    if (!actorDiv) {
+        console.error(`Actor display update: element not found (actor-${actor.name})`);
+        return;
+    }
 
     // Update health bar
     const healthBar = actorDiv.querySelector('.health-bar');
-    if (healthBar && typeof actor.hp === 'number' && typeof actor.maxHp === 'number') {
-        const percent = actor.maxHp > 0 ? (actor.hp / actor.maxHp) : 0;
-        healthBar.style.width = `${percent * 100}%`;
-        // Remove previous color classes
-        healthBar.classList.remove('health-bar-yellow', 'health-bar-red');
-        if (percent < 0.33) {
-            healthBar.classList.add('health-bar-red');
-        } else if (percent < 0.66) {
-            healthBar.classList.add('health-bar-yellow');
-        }
-        // else: default green/blue
+    if (!healthBar) {
+        console.error('Health bar element not found');
+        return;
     }
+
+    const percent = actor.maxHp > 0 ? (actor.hp / actor.maxHp) : 0;
+    healthBar.style.width = `${percent * 100}%`;
+    // Remove previous color classes
+    healthBar.classList.remove('health-bar-yellow', 'health-bar-red');
+    if (percent < 0.33) {
+        healthBar.classList.add('health-bar-red');
+    } else if (percent < 0.66) {
+        healthBar.classList.add('health-bar-yellow');
+    }
+    // else: default green/blue
 
     // Update status effects
     const statusEffects = actorDiv.querySelector('.status-effects');
-    if (statusEffects) {
-        statusEffects.innerHTML = '';
-        renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
-        renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
+    if (!statusEffects) {
+        console.error('Status effects container not found');
+        return;
     }
+
+    statusEffects.innerHTML = '';
+    renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
+    renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
 }
 
 const playback = createPlayback({
     initializeActors,
-    updateAllActorDisplays,
-    logEventUnified,
     executeEvent,
     updatePlayToggleButton
 });
@@ -202,8 +209,11 @@ function updatePlayToggleButton() {
     }
 }
 
-/** @param {CombatEvent} event */
-function executeEvent(event) {
+/**
+ * @param {Object} event
+ * @param {BattleSnapshot} currentSnapshot
+ */
+function executeEvent(event, currentSnapshot) {
     switch (event.type) {
         case CombatEventType.TurnStart:
             // No special animation for turn start
@@ -239,12 +249,11 @@ async function runBattleApplication() {
         return;
     }
     playback.initialSnapshot = initialSnapshotEvent.snapshot;
+    playback.currentSnapshot = JSON.parse(JSON.stringify(playback.initialSnapshot));
     initializeActors(playback.initialSnapshot);
-    // Ensure status effects (statBuffs, resourceTicks) render immediately
     updateAllActorDisplays(playback.initialSnapshot);
     playback.init(logData);
     wireControls();
-    // Auto-play by default
     playback.play();
 }
 
@@ -262,4 +271,4 @@ function wireControls() {
     updatePlayToggleButton();
 }
 
-export { runBattleApplication };
+export { runBattleApplication, updateAllActorDisplays };
