@@ -413,8 +413,6 @@ body::before {
     position: relative;
 }
 
-.controls-left, .controls-right { display:flex; align-items:center; gap:12px; }
-
 .control-btn {
     position: relative;
     cursor: pointer;
@@ -523,22 +521,24 @@ body::before {
     background: #3a2e23;
     color: var(--ink);
     border: 1.5px solid #7a5a38;
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     letter-spacing: 0.05em;
-    box-shadow: 0 0 6px rgba(0,0,0,0.5) inset;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5) inset;
     transition: border-color 200ms, box-shadow 220ms, background 200ms;
+    height: 40px;
+    min-width: 90px;
+    appearance: none;
+    outline: none;
+    display: flex;
+    align-items: center;
 }
-.speed-select:hover { border-color: var(--accent-color); }
-.speed-select:focus { outline:none; border-color: var(--accent-color); box-shadow:0 0 0 3px rgba(212,175,55,0.35); }
 
 /* Compact layout on narrow screens */
 @media (max-width: 900px) {
     .controls { flex-wrap: wrap; gap: 14px; padding: 12px 16px; }
-    .controls-left { flex: 1 1 100%; justify-content: center; }
-    .controls-right { flex: 1 1 100%; justify-content: center; }
     .left-column { width: 90%; max-width: 600px; }
     .left-column .controls { margin-bottom: 12px; }
     .left-column .action-log { height: 260px; }
