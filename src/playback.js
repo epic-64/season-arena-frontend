@@ -99,7 +99,6 @@ function createPlayback() {
                 this.applyDeltaToSnapshot(evt.delta, this.currentSnapshot);
             }
 
-            console.log(this.currentSnapshot);
             updateAllActorDisplays(this.currentSnapshot);
             animateEvent(evt);
 
