@@ -37,7 +37,7 @@
  * @readonly
  * @enum {string}
  */
-const ActorClass = {
+export const ActorClass = {
     Fighter: 'Fighter',
     Mage: 'Mage',
     Cleric: 'Cleric',
@@ -170,9 +170,3 @@ const ActorClass = {
  * @property {string} winner
  * @property {BattleSnapshot} snapshot
  */
-
-// Export ActorClass for use in other modules
-if (typeof module !== 'undefined') {
-    module.exports = { ActorClass };
-}
-
