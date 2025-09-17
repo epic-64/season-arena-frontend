@@ -1,4 +1,5 @@
 import { skillEmojis, statusEmojis } from './emojiMappings.js';
+import { ActorClass } from "./types.js";
 
 // === Utility Functions ===
 async function loadLog() {
@@ -135,26 +136,24 @@ function logEventUnified(event) {
 
 // === Actor Setup ===
 function getPortraitSrc(actorClass) {
-    // Map actor names to portrait filenames
-    const nameToFile = {
-        'Mage': 'mage.png',
-        'Cleric': 'druid.png',
-        'Hunter': 'hunter2.png',
-        'Paladin': 'paladin.png',
-        'Bard': 'bard.png',
-        'Ratman': 'ratman.png',
-        'Fishman': 'fishman.png',
-        'Scoundrel': 'scoundrel.png',
-        'AbyssalDragon': 'abyss_dragon.png',
+    // Map ActorClass values to portrait filenames
+    const classToFile = {
+        [ActorClass.Mage]: 'mage.png',
+        [ActorClass.Cleric]: 'druid.png',
+        [ActorClass.Hunter]: 'hunter2.png',
+        [ActorClass.Paladin]: 'paladin.png',
+        [ActorClass.Bard]: 'bard.png',
+        [ActorClass.Fishman]: 'fishman.png',
+        [ActorClass.AbyssalDragon]: 'abyss_dragon.png',
     };
 
     const lowerName = actorClass.toLowerCase();
 
     // Generic containment lookup
     let file = 'cleric.png'; // default
-    for (const key in nameToFile) {
+    for (const key in classToFile) {
         if (lowerName.includes(key.toLowerCase())) {
-            file = nameToFile[key];
+            file = classToFile[key];
             break;
         }
     }
