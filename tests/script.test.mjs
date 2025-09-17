@@ -1,4 +1,4 @@
-const { createElement, updateActionLog } = require('../src/script');
+import { createElement, updateActionLog } from '../src/script.js';
 
 describe('createElement', () => {
     beforeEach(() => {
