@@ -80,28 +80,26 @@ function animateDamageDealt(event) {
     }
 }
 
+/**
+ * @param {CombatEvent_ResourceDrained} event - The resource drained event object
+ * @return {void}
+ */
 function animateResourceDrained(event) {
-    const targetEl = document.getElementById(`actor-${event.target}`);
-    if (!targetEl) return;
-    try {
-        let val;
-        for (const f of ['amount','value','delta','deltaHp','hpChange']) {
-            if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { val = event[f]; break; }
-        }
-        if (val === undefined && event.resourceChanges && typeof event.resourceChanges === 'object') {
-            if (typeof event.resourceChanges.hp === 'number') val = event.resourceChanges.hp;
-        }
-        if (typeof val === 'number') {
-            if (val < 0) {
-                flickerOutline(targetEl, 'flicker', 450);
-                showFloatingNumber(targetEl, Math.abs(val), 'damage');
-            } else if (val > 0) {
-                flickerOutline(targetEl, 'heal-flicker', 450);
-                showFloatingNumber(targetEl, val, 'heal');
-            }
-        }
-    } catch (e) {
-        console.debug('Resource change number failed:', e);
+    const targetId = `actor-${event.target}`;
+    const targetEl = document.getElementById(targetId);
+    if (!targetEl) {
+        console.error(`Resource drain animation: target element not found (${targetId})`);
+        return;
+    }
+
+    const amount = event.amount;
+
+    if (amount < 0) {
+        flickerOutline(targetEl, 'flicker', 450);
+        showFloatingNumber(targetEl, Math.abs(amount), 'damage');
+    } else if (amount > 0) {
+        flickerOutline(targetEl, 'heal-flicker', 450);
+        showFloatingNumber(targetEl, amount, 'heal');
     }
 }
 
