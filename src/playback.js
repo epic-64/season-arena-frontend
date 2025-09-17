@@ -1,10 +1,11 @@
 // Playback controller module for battle log playback
 // Handles play, pause, step, and state rebuild
 
+import { updateAllActorDisplays } from './script.js';
+import { logEventUnified } from './eventLog.js';
+
 function createPlayback({
     initializeActors,
-    updateAllActorDisplays,
-    logEventUnified,
     executeEvent,
     updatePlayToggleButton
 }) {
@@ -17,6 +18,8 @@ function createPlayback({
         baseInterval: 400,
         speed: 1,
         initialSnapshot: null,
+        currentSnapshot: null,
+        snapshotHistory: [],
 
         init(log) {
             this.rawLog = log;
@@ -64,15 +67,40 @@ function createPlayback({
             this.timer = setTimeout(() => this.scheduleNext(), this.baseInterval / this.speed);
         },
 
+        // Helper to apply delta to the current snapshot
+        applyDeltaToSnapshot(delta, snapshot) {
+            if (!delta || !delta.actors) return;
+            delta.actors.forEach(deltaActor => {
+                const actor = snapshot.actors.find(a => a.name === deltaActor.name);
+                if (actor) {
+                    Object.assign(actor, deltaActor);
+                }
+            });
+        },
+
         stepForward() {
-            if (this.index >= this.events.length - 1) return;
+            if (this.index >= this.events.length - 1) {
+                return;
+            }
+
+            // Save a deep copy of the current snapshot for stepBack
+            if (this.currentSnapshot) {
+                this.snapshotHistory.push(JSON.parse(JSON.stringify(this.currentSnapshot)));
+            } else if (this.initialSnapshot) {
+                this.currentSnapshot = JSON.parse(JSON.stringify(this.initialSnapshot));
+                this.snapshotHistory.push(JSON.parse(JSON.stringify(this.currentSnapshot)));
+            }
             this.index++;
             const evt = this.events[this.index];
             logEventUnified(evt);
-            executeEvent(evt);
-            if (evt.snapshot) {
-                updateAllActorDisplays(evt.snapshot);
+            // Apply event to currentSnapshot
+            if (evt.type === 'TurnStart' && evt.snapshot) {
+                this.currentSnapshot = JSON.parse(JSON.stringify(evt.snapshot));
+            } else if (evt.delta) {
+                this.applyDeltaToSnapshot(evt.delta, this.currentSnapshot);
             }
+            executeEvent(evt, this.currentSnapshot);
+            updateAllActorDisplays(this.currentSnapshot);
             if (this.index >= this.events.length - 1) {
                 if (this.playing) this.pause();
             }
@@ -80,9 +108,11 @@ function createPlayback({
 
         stepBack() {
             if (this.index < 0) return;
-            if (this.playing) this.pause();
+            if (this.snapshotHistory.length > 0) {
+                this.currentSnapshot = this.snapshotHistory.pop();
+                updateAllActorDisplays(this.currentSnapshot);
+            }
             this.index--;
-            this.rebuildState();
         },
 
         rebuildState() {
@@ -126,4 +156,3 @@ function createPlayback({
 }
 
 export { createPlayback };
-
