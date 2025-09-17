@@ -2,8 +2,9 @@
 // Handles visual effects for combat events
 
 import { createElement } from './utils.js';
+import { skillEmojis } from './emojiMappings.js';
 
-function animateSkillUsed(event, skillEmojis) {
+function animateSkillUsed(event) {
     const actorEl = document.getElementById(`actor-${event.actor}`);
 
     if (!actorEl || !Array.isArray(event.targets) || event.targets.length === 0) {
@@ -49,7 +50,7 @@ function animateSkillUsed(event, skillEmojis) {
     setTimeout(() => actorEl.classList.remove('strike'), 500);
 }
 
-function animateDamageDealt(event, showFloatingNumber) {
+function animateDamageDealt(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
 
     // Restart animation if already active
@@ -77,7 +78,7 @@ function animateDamageDealt(event, showFloatingNumber) {
     }
 }
 
-function animateResourceDrained(event, showFloatingNumber) {
+function animateResourceDrained(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
     if (!targetEl) return;
 
@@ -103,7 +104,7 @@ function animateResourceDrained(event, showFloatingNumber) {
     }
 }
 
-function animateHeal(event, showFloatingNumber) {
+function animateHeal(event) {
     try {
         let healAmount;
         for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
