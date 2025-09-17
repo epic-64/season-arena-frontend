@@ -11,36 +11,12 @@ import {ActorClass} from './types.js';
 import {createElement} from './utils.js';
 import {logEventUnified} from './eventLog.js';
 
-// === Utility Functions ===
 async function loadLog() {
     try {
         const response = await fetch('src/log2.json');
         return await response.json();
     } catch (error) {
         console.error('Error loading log:', error);
-    }
-}
-
-function updateActionLog(message) {
-    const logContainer = document.getElementById('action-log');
-
-    // Determine if user is currently at (or very near) the bottom BEFORE appending
-    // Using a small threshold to account for fractional pixels / rounding.
-    const threshold = 8;
-    const distanceFromBottom = logContainer.scrollHeight - logContainer.scrollTop - logContainer.clientHeight;
-    const wasAtBottom = distanceFromBottom <= threshold;
-
-    const newMessage = createElement('div', { text: message });
-    logContainer.appendChild(newMessage);
-
-    // Keep only last 50 messages
-    while (logContainer.children.length > 50) {
-        logContainer.removeChild(logContainer.firstChild);
-    }
-
-    // Auto-scroll only if the user had not scrolled up
-    if (wasAtBottom) {
-        logContainer.scrollTop = logContainer.scrollHeight;
     }
 }
 
@@ -292,8 +268,8 @@ const playback = {
         return this.initialSnapshot;
     },
 
-    setSpeed(mult) {
-        this.speed = mult;
+    setSpeed(multiplier) {
+        this.speed = multiplier;
         if (this.playing) {
             this.pause();
             this.play();
@@ -342,6 +318,7 @@ function executeEvent(event) {
 // === Main Runner ===
 async function runBattleApplication() {
     const logData = await loadLog();
+
     const initialSnapshotEvent = logData.find(e => e.type === "playground.engine_v1.CombatEvent.TurnStart");
     if (!initialSnapshotEvent?.snapshot) {
         console.error("Initial snapshot not found in log.");
@@ -371,4 +348,4 @@ function wireControls() {
     updatePlayToggleButton();
 }
 
-export { runBattleApplication, createElement, updateActionLog };
+export { runBattleApplication };
