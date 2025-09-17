@@ -1,9 +1,8 @@
 // Playback controller module for battle log playback
 // Handles play, pause, step, and state rebuild
 
-import { updateAllActorDisplays } from './script.js';
+import { initializeActors, updateAllActorDisplays, executeEvent, updatePlayToggleButton } from './script.js';
 import { logEventUnified } from './eventLog.js';
-import { initializeActors, executeEvent, updatePlayToggleButton } from './script.js';
 
 function createPlayback() {
     return {
@@ -109,7 +108,7 @@ function createPlayback() {
             if (this.index < 0) return;
             if (this.snapshotHistory.length > 0) {
                 this.currentSnapshot = this.snapshotHistory.pop();
-                // Rebuild actor DOM nodes after step back
+                // Always rebuild actor DOM nodes before updating displays
                 initializeActors(this.currentSnapshot);
                 updateAllActorDisplays(this.currentSnapshot);
             }
@@ -139,9 +138,14 @@ function createPlayback() {
         },
 
         findSnapshotForIndex(i) {
-            if (i < 0) return this.initialSnapshot;
+            if (i < 0) {
+                return this.initialSnapshot;
+            }
+
             for (let k = i; k >= 0; k--) {
-                if (this.events[k].snapshot) return this.events[k].snapshot;
+                if (this.events[k].snapshot) {
+                    return this.events[k].snapshot;
+                }
             }
             return this.initialSnapshot;
         },
