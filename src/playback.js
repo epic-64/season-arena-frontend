@@ -3,12 +3,9 @@
 
 import { updateAllActorDisplays } from './script.js';
 import { logEventUnified } from './eventLog.js';
+import { initializeActors, executeEvent, updatePlayToggleButton } from './script.js';
 
-function createPlayback({
-    initializeActors,
-    executeEvent,
-    updatePlayToggleButton
-}) {
+function createPlayback() {
     return {
         rawLog: [],
         events: [],
@@ -96,6 +93,8 @@ function createPlayback({
             // Apply event to currentSnapshot
             if (evt.type === 'TurnStart' && evt.snapshot) {
                 this.currentSnapshot = JSON.parse(JSON.stringify(evt.snapshot));
+                // Rebuild actor DOM nodes for a full snapshot
+                initializeActors(this.currentSnapshot);
             } else if (evt.delta) {
                 this.applyDeltaToSnapshot(evt.delta, this.currentSnapshot);
             }
@@ -110,6 +109,8 @@ function createPlayback({
             if (this.index < 0) return;
             if (this.snapshotHistory.length > 0) {
                 this.currentSnapshot = this.snapshotHistory.pop();
+                // Rebuild actor DOM nodes after step back
+                initializeActors(this.currentSnapshot);
                 updateAllActorDisplays(this.currentSnapshot);
             }
             this.index--;
