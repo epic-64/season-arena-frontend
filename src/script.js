@@ -7,7 +7,7 @@ import {
 } from './animations.js';
 
 import {statusEmojis} from './emojiMappings.js';
-import {ActorClass} from './types.js';
+import {ActorClass, CombatEventType} from './types.js';
 import {createElement} from './utils.js';
 import {logEventUnified} from './eventLog.js';
 import {createPlayback} from './playback.js';
@@ -193,24 +193,26 @@ function updatePlayToggleButton() {
     }
 }
 
+/** @param {CombatEvent} event */
 function executeEvent(event) {
     switch (event.type) {
-        case "SkillUsed":
+        case CombatEventType.SkillUsed:
             animateSkillUsed(event);
             break;
-        case "DamageDealt":
+        case CombatEventType.DamageDealt:
             animateDamageDealt(event);
             break;
-        case "ResourceDrained":
+        case CombatEventType.ResourceDrained:
             animateResourceDrained(event);
             break;
-        case "Healed":
+        case CombatEventType.Healed:
             animateHeal(event);
             break;
-        case "BuffApplied":
+        case CombatEventType.BuffApplied:
             animateBuffApplied(event);
             break;
         default:
+            console.error('Unhandled event type', event);
             break;
     }
 }
@@ -219,7 +221,7 @@ function executeEvent(event) {
 async function runBattleApplication() {
     const logData = await loadLog();
 
-    const initialSnapshotEvent = logData.find(e => e.type === "TurnStart");
+    const initialSnapshotEvent = logData.find(e => e.type === CombatEventType.TurnStart);
     if (!initialSnapshotEvent?.snapshot) {
         console.error("Initial snapshot not found in log.");
         return;

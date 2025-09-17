@@ -50,6 +50,21 @@ export const ActorClass = {
 };
 
 /**
+ * @readonly
+ * @enum {string}
+ */
+export const CombatEventType = {
+    TurnStart: 'TurnStart',
+    SkillUsed: 'SkillUsed',
+    DamageDealt: 'DamageDealt',
+    Healed: 'Healed',
+    BuffApplied: 'BuffApplied',
+    BuffExpired: 'BuffExpired',
+    ResourceDrained: 'ResourceDrained',
+    BattleEnd: 'BattleEnd',
+};
+
+/**
  * @typedef {Object} Actor
  * @property {ActorClass} actorClass
  * @property {string} name

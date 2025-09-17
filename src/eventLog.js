@@ -1,6 +1,7 @@
 // Event log formatting and logging utilities
 
 import {createElement} from "./utils.js";
+import {CombatEventType} from "./types.js";
 
 function updateActionLog(message) {
     const logContainer = document.getElementById('action-log');
@@ -38,23 +39,23 @@ function formatEventLog(event) {
             return undefined;
         };
         switch (type) {
-            case "TurnStart": {
+            case CombatEventType.TurnStart: {
                 return `--- Turn ${event.turn} ---`;
             }
-            case "SkillUsed": {
+            case CombatEventType.SkillUsed: {
                 const actor = event.actor || 'Unknown';
                 const skill = event.skill || 'Skill';
                 const targets = Array.isArray(event.targets) ? event.targets.join(', ') : (event.targets || 'Unknown');
                 return `${actor} uses ${skill} on ${targets}`;
             }
-            case "BuffApplied": {
+            case CombatEventType.BuffApplied: {
                 // source, target, buffId
                 const source = event.source;
                 const target = event.target;
                 const buff = event.buffId;
                 return `${source} applies ${buff} to ${target}`;
             }
-            case "DamageDealt": {
+            case CombatEventType.DamageDealt: {
                 const source = event.actor || event.source || 'Unknown';
                 const target = event.target || 'Unknown';
                 let amount = getAmount(['amount','damage','value','delta','deltaHp','hpChange'], event);
@@ -66,7 +67,7 @@ function formatEventLog(event) {
                 if (typeof newHp === 'number' && typeof maxHp === 'number') msg += ` (HP ${newHp}/${maxHp})`;
                 return msg;
             }
-            case "Healed": {
+            case CombatEventType.Healed: {
                 const source = event.source || event.actor || 'Unknown';
                 const target = event.target || (Array.isArray(event.targets) ? event.targets.join(', ') : 'Unknown');
                 let amount = getAmount(['heal','healed','amount','value','delta','deltaHp','hpChange'], event);
@@ -78,7 +79,7 @@ function formatEventLog(event) {
                 if (typeof newHp === 'number' && typeof maxHp === 'number') msg += ` (HP ${newHp}/${maxHp})`;
                 return msg;
             }
-            case "ResourceDrained": {
+            case CombatEventType.ResourceDrained: {
                 const target = event.target || 'Unknown';
                 const buff = event.buffId || 'Effect';
                 let amount = getAmount(['amount','value','delta','deltaHp','hpChange'], event);
