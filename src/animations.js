@@ -112,13 +112,13 @@ function animateHeal(event)
     let healAmount = event.amount;
     let elementId = `actor-${event.target}`;
 
-    const targetEl2 = document.getElementById(elementId);
-    if(!targetEl2) {
+    const domEl = document.getElementById(elementId);
+    if(!domEl) {
         console.error('Heal animation: target element not found');
         return;
     }
 
-    showFloatingNumber(targetEl2, Math.abs(healAmount), 'heal');
+    showFloatingNumber(domEl, Math.abs(healAmount), 'heal');
 }
 
 function animateBuffApplied(event) {
