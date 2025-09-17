@@ -50,18 +50,20 @@ function animateSkillUsed(event) {
     setTimeout(() => actorEl.classList.remove('strike'), 500);
 }
 
-function animateDamageDealt(event) {
-    const targetEl = document.getElementById(`actor-${event.target}`);
-
-    // Restart animation if already active
-    if (targetEl.classList.contains('flicker')) {
-        targetEl.classList.remove('flicker');
-        // Force reflow to allow animation restart
+// Helper to trigger outline flicker
+function flickerOutline(targetEl, className, duration = 450) {
+    if (!targetEl) return;
+    if (targetEl.classList.contains(className)) {
+        targetEl.classList.remove(className);
         void targetEl.offsetWidth;
     }
-    targetEl.classList.add('flicker');
-    setTimeout(() => targetEl.classList.remove('flicker'), 450);
+    targetEl.classList.add(className);
+    setTimeout(() => targetEl.classList.remove(className), duration);
+}
 
+function animateDamageDealt(event) {
+    const targetEl = document.getElementById(`actor-${event.target}`);
+    flickerOutline(targetEl, 'flicker', 450);
     try {
         let damageVal = event['amount'];
         if (typeof damageVal !== 'number') {
@@ -81,21 +83,20 @@ function animateDamageDealt(event) {
 function animateResourceDrained(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
     if (!targetEl) return;
-
-    // Attempt to show numeric change if present
     try {
         let val;
         for (const f of ['amount','value','delta','deltaHp','hpChange']) {
             if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { val = event[f]; break; }
         }
-        // Some events might nest resource changes
         if (val === undefined && event.resourceChanges && typeof event.resourceChanges === 'object') {
             if (typeof event.resourceChanges.hp === 'number') val = event.resourceChanges.hp;
         }
         if (typeof val === 'number') {
             if (val < 0) {
+                flickerOutline(targetEl, 'flicker', 450);
                 showFloatingNumber(targetEl, Math.abs(val), 'damage');
             } else if (val > 0) {
+                flickerOutline(targetEl, 'heal-flicker', 450);
                 showFloatingNumber(targetEl, val, 'heal');
             }
         }
@@ -111,13 +112,12 @@ function animateHeal(event)
 {
     let healAmount = event.amount;
     let elementId = `actor-${event.target}`;
-
     const domEl = document.getElementById(elementId);
     if(!domEl) {
         console.error('Heal animation: target element not found');
         return;
     }
-
+    flickerOutline(domEl, 'heal-flicker', 450);
     showFloatingNumber(domEl, Math.abs(healAmount), 'heal');
 }
 
@@ -154,4 +154,3 @@ export {
     animateBuffApplied,
     showFloatingNumber
 };
-
