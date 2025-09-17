@@ -196,6 +196,9 @@ function updatePlayToggleButton() {
 /** @param {CombatEvent} event */
 function executeEvent(event) {
     switch (event.type) {
+        case CombatEventType.TurnStart:
+            // No special animation for turn start
+            break;
         case CombatEventType.SkillUsed:
             animateSkillUsed(event);
             break;
