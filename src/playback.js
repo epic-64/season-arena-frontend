@@ -93,12 +93,9 @@ function createPlayback() {
             const evt = this.events[this.index];
             logEventUnified(evt);
 
-            if (evt.type === CombatEventType.TurnStart && evt.snapshot) {
+            if (evt.snapshot) {
                 this.currentSnapshot = JSON.parse(JSON.stringify(evt.snapshot));
-                // Rebuild actor DOM nodes for a full snapshot
-                initializeActors(this.currentSnapshot);
             } else {
-                console.log(evt)
                 this.applyDeltaToSnapshot(evt.delta, this.currentSnapshot);
             }
 
