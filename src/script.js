@@ -35,15 +35,8 @@ function getPortraitSrc(actorClass) {
     };
 
     const lowerName = actorClass.toLowerCase();
+    const file = classToFile[actorClass] || `${lowerName}.png`; // default to lowercase name
 
-    // Generic containment lookup
-    let file = 'cleric.png'; // default
-    for (const key in classToFile) {
-        if (lowerName.includes(key.toLowerCase())) {
-            file = classToFile[key];
-            break;
-        }
-    }
     return `assets/images/portraits/${file}`;
 }
 
