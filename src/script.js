@@ -150,9 +150,8 @@ function updateAllActorDisplays(snapshot) {
  * @param {ActorSnapshot} actor
  * @return {void}
  */
-function updateActorDisplay(actor) {
-    console.log(actor)
-
+function updateActorDisplay(actor)
+{
     const actorDiv = document.getElementById(`actor-${actor.name}`);
     if (!actorDiv) {
         console.error(`Actor display update: element not found (actor-${actor.name})`);
