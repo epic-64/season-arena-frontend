@@ -412,16 +412,16 @@ function executeEvent(event, animate = true) {
     if (!animate) return;
     switch (event.type) {
         case "playground.engine_v1.CombatEvent.SkillUsed":
-            animateSkillUsed(event, skillEmojis);
+            animateSkillUsed(event);
             break;
         case "playground.engine_v1.CombatEvent.DamageDealt":
-            animateDamageDealt(event, showFloatingNumber);
+            animateDamageDealt(event);
             break;
         case "playground.engine_v1.CombatEvent.ResourceDrained":
-            animateResourceDrained(event, showFloatingNumber);
+            animateResourceDrained(event);
             break;
         case "playground.engine_v1.CombatEvent.Healed":
-            animateHeal(event, showFloatingNumber);
+            animateHeal(event);
             break;
         case "playground.engine_v1.CombatEvent.BuffApplied":
             animateBuffApplied(event);
