@@ -49,6 +49,8 @@ function createPlayback() {
         reset() {
             this.pause();
             this.index = -1;
+            this.snapshotHistory = []; // Clear history to prevent memory leak
+            this.currentSnapshot = null; // Optionally reset current snapshot for a clean state
             this.rebuildState();
             this.replayLogs();
         },
@@ -119,10 +121,10 @@ function createPlayback() {
 
             if (this.snapshotHistory.length > 0) {
                 this.currentSnapshot = this.snapshotHistory.pop();
-                // Always rebuild actor DOM nodes before updating displays
-                initializeActors(this.currentSnapshot);
                 updateAllActorDisplays(this.currentSnapshot);
             }
+
+            this.pause()
         },
 
         rebuildState() {
