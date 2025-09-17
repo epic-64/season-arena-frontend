@@ -88,64 +88,85 @@ function initializeActors(snapshot) {
     });
 }
 
+/**
+ * @param {HTMLElement} container
+ * @param {StatBuffSnapshot[]|ResourceTickSnapshot[]} effects
+ * @param {(effect: StatBuffSnapshot|ResourceTickSnapshot) => string | undefined } getTitle
+ */
 function renderStatusEffects(container, effects, getTitle) {
-    if (!Array.isArray(effects)) return;
-    effects.forEach(effect => {
-        const symbol = statusEmojis[effect.id] || '✨';
-        const effectEmoji = createElement('span', {
-            classes: ['status-effect']
-        });
-        effectEmoji.textContent = symbol;
-
-        // value indicator (top left)
-        const value = 0; // todo: parse actual value from statusEffect
-        if (value) {
-            const valueSpan = createElement('span', {
-                classes: ['effect-value']
-            });
-            valueSpan.textContent = value;
-            effectEmoji.appendChild(valueSpan);
-        }
-
-        // Duration indicator (bottom right)
-        if (effect.duration) {
-            const durationSpan = createElement('span', {
-                classes: ['effect-duration']
-            });
-            durationSpan.textContent = effect.duration;
-            effectEmoji.appendChild(durationSpan);
-        }
-
-        try {
-            if (getTitle) {
-                effectEmoji.title = getTitle(effect);
-            }
-        } catch (e) {
-            console.error('Error generating effect title:', e);
-        }
-        container.appendChild(effectEmoji);
-    });
+    effects.forEach(effect => renderStatusEffect(container, effect, getTitle));
 }
 
-function updateAllActorDisplays(snapshot) {
-    if (!snapshot || !snapshot.actors) return;
-    snapshot.actors.forEach(actor => {
-        const actorDiv = document.getElementById(`actor-${actor.name}`);
-        if (!actorDiv) return;
-        // Update health bar
-        const healthBar = actorDiv.querySelector('.health-bar');
-        if (healthBar && typeof actor.hp === 'number' && typeof actor.maxHp === 'number') {
-            healthBar.style.width = `${(actor.hp / actor.maxHp) * 100}%`;
-        }
-        // Update status effects
-        const statusEffects = actorDiv.querySelector('.status-effects');
-        if (statusEffects) {
-            statusEffects.innerHTML = '';
-            renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
-            renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
-        }
-        // You can add more updates here (e.g., cooldowns, buffs, etc.)
+/**
+ * @param {HTMLElement} container
+ * @param {StatBuffSnapshot|ResourceTickSnapshot} effect
+ * @param {(effect: StatBuffSnapshot|ResourceTickSnapshot) => string | undefined } getTitle
+ */
+function renderStatusEffect(container, effect, getTitle) {
+    const symbol = statusEmojis[effect.id] || '✨';
+    const effectEmoji = createElement('span', {
+        classes: ['status-effect']
     });
+    effectEmoji.textContent = symbol;
+
+    // value indicator (top left)
+    const value = 0; // todo: parse actual value from statusEffect
+    if (value) {
+        const valueSpan = createElement('span', {
+            classes: ['effect-value']
+        });
+        valueSpan.textContent = value;
+        effectEmoji.appendChild(valueSpan);
+    }
+
+    // Duration indicator (bottom right)
+    if (effect.duration) {
+        const durationSpan = createElement('span', {
+            classes: ['effect-duration']
+        });
+        durationSpan.textContent = effect.duration;
+        effectEmoji.appendChild(durationSpan);
+    }
+
+    try {
+        if (getTitle) {
+            effectEmoji.title = getTitle(effect);
+        }
+    } catch (e) {
+        console.error('Error generating effect title:', e);
+    }
+    container.appendChild(effectEmoji);
+}
+
+/**
+ * @param {BattleSnapshot} snapshot
+ * @return {void}
+ */
+function updateAllActorDisplays(snapshot) {
+    snapshot.actors.forEach(updateActorDisplay);
+}
+
+/**
+ * @param {ActorSnapshot} actor
+ * @return {void}
+ */
+function updateActorDisplay(actor) {
+    const actorDiv = document.getElementById(`actor-${actor.name}`);
+    if (!actorDiv) return;
+
+    // Update health bar
+    const healthBar = actorDiv.querySelector('.health-bar');
+    if (healthBar && typeof actor.hp === 'number' && typeof actor.maxHp === 'number') {
+        healthBar.style.width = `${(actor.hp / actor.maxHp) * 100}%`;
+    }
+
+    // Update status effects
+    const statusEffects = actorDiv.querySelector('.status-effects');
+    if (statusEffects) {
+        statusEffects.innerHTML = '';
+        renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
+        renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
+    }
 }
 
 const playback = createPlayback({
