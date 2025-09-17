@@ -1,39 +1,4 @@
-// === Emoji Mappings ===
-const skillEmojis = {
-    "Strike": "🗡️",
-    "Double Strike": "⚔️",
-    "Poison Strike": "🗡️🧪",
-    "Whirlwind": "🌪️",
-    "Fireball": "☄️🔥",
-    "Explode": "☀️",
-    "Spark": "✨",
-    "Regeneration": "💞",
-    "Flash Heal": "💊",
-    "Group Heal": "💞",
-    "Ice Lance": "☄️❄️",
-    "Ice Shot": "❄️🏹",
-    "Black Hole": "💫",
-};
-
-const statusEmojis = {
-    "Poison": "🧪",
-    "Burn": "🔥",
-    "Burning": "🔥",
-    "Shock": "🌩️",
-    "Shocked": "🌩️",
-    "Bleeding": "🩸",
-    "Stunned": "💫",
-    "Chill": "🧊",
-    "Chilled": "🧊",
-    "Frozen": "❄️",
-    "Regen": "💖",
-    "Protection": "🛡️",
-    "Boost": "⏫",
-    "Weaken": "⏬",
-    "Slow": "🐢",
-    "Amplify": "🔺",
-    "Aimed": "🔺",
-};
+import { skillEmojis, statusEmojis } from './emojiMappings.js';
 
 // === Utility Functions ===
 async function loadLog() {
@@ -507,7 +472,9 @@ const playback = {
         const evt = this.events[this.index];
         logEventUnified(evt);
         executeEvent(evt, withAnimation);
-        if (evt.snapshot) updateAllActorDisplays(evt.snapshot);
+        if (evt.snapshot) {
+            updateAllActorDisplays(evt.snapshot);
+        }
         if (this.index >= this.events.length - 1) {
             // If playing and reached end, force pause to update button state
             if (this.playing) this.pause();
@@ -632,10 +599,4 @@ function wireControls() {
     updatePlayToggleButton();
 }
 
-// Export for testing
-if (typeof module !== 'undefined') {
-    module.exports = {
-        createElement,
-        updateActionLog
-    };
-}
+export { runBattleApplication, createElement, updateActionLog };
