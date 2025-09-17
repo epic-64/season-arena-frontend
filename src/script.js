@@ -187,11 +187,7 @@ function updateActorDisplay(actor) {
     renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
 }
 
-const playback = createPlayback({
-    initializeActors,
-    executeEvent,
-    updatePlayToggleButton
-});
+const playback = createPlayback();
 
 // Helper: update play/pause toggle button label/state
 function updatePlayToggleButton() {
@@ -271,4 +267,4 @@ function wireControls() {
     updatePlayToggleButton();
 }
 
-export { runBattleApplication, updateAllActorDisplays };
+export { runBattleApplication, updateAllActorDisplays, updatePlayToggleButton, executeEvent, initializeActors };
