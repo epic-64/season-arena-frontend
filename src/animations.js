@@ -1,9 +1,14 @@
 // Animation-related functions extracted from script.js
 // Handles visual effects for combat events
 
-function animateSkillUsed(event, createElement, skillEmojis) {
+import { createElement } from './utils.js';
+
+function animateSkillUsed(event, skillEmojis) {
     const actorEl = document.getElementById(`actor-${event.actor}`);
-    if (!actorEl || !Array.isArray(event.targets) || event.targets.length === 0) return;
+
+    if (!actorEl || !Array.isArray(event.targets) || event.targets.length === 0) {
+        return;
+    }
 
     // Animate skill emoji for each target
     event.targets.forEach(targetName => {

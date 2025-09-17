@@ -7,8 +7,9 @@ import {
     showFloatingNumber
 } from './animations.js';
 
-import {skillEmojis, statusEmojis} from './emojiMappings.js';
-import { ActorClass } from "./types.js";
+import { skillEmojis, statusEmojis } from './emojiMappings.js';
+import { ActorClass } from './types.js';
+import { createElement } from './utils.js';
 
 // === Utility Functions ===
 async function loadLog() {
@@ -18,15 +19,6 @@ async function loadLog() {
     } catch (error) {
         console.error('Error loading log:', error);
     }
-}
-
-function createElement(tag, options = {}) {
-    const el = document.createElement(tag);
-    if (options.text) el.textContent = options.text;
-    if (options.classes) el.classList.add(...options.classes);
-    if (options.id) el.id = options.id;
-    if (options.styles) Object.assign(el.style, options.styles);
-    return el;
 }
 
 function updateActionLog(message) {
@@ -420,7 +412,7 @@ function executeEvent(event, animate = true) {
     if (!animate) return;
     switch (event.type) {
         case "playground.engine_v1.CombatEvent.SkillUsed":
-            animateSkillUsed(event, createElement, skillEmojis);
+            animateSkillUsed(event, skillEmojis);
             break;
         case "playground.engine_v1.CombatEvent.DamageDealt":
             animateDamageDealt(event, showFloatingNumber);
