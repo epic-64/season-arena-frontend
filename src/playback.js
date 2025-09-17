@@ -1,12 +1,12 @@
 // Playback controller module for battle log playback
 // Handles play, pause, step, and state rebuild
 
-import { initializeActors, updateAllActorDisplays, executeEvent, updatePlayToggleButton } from './script.js';
+import { initializeActors, updateAllActorDisplays, animateEvent, updatePlayToggleButton } from './script.js';
 import { logEventUnified } from './eventLog.js';
+import {CombatEventType} from "./types.js";
 
 function createPlayback() {
     return {
-        rawLog: [],
         events: [],
         index: -1,          // last executed index
         playing: false,
@@ -18,8 +18,7 @@ function createPlayback() {
         snapshotHistory: [],
 
         init(log) {
-            this.rawLog = log;
-            this.events = log; // Use full log for context
+            this.events = log;
         },
 
         play() {
@@ -51,6 +50,7 @@ function createPlayback() {
             this.pause();
             this.index = -1;
             this.rebuildState();
+            this.replayLogs();
         },
 
         scheduleNext() {
@@ -86,19 +86,24 @@ function createPlayback() {
                 this.currentSnapshot = JSON.parse(JSON.stringify(this.initialSnapshot));
                 this.snapshotHistory.push(JSON.parse(JSON.stringify(this.currentSnapshot)));
             }
+
             this.index++;
             const evt = this.events[this.index];
             logEventUnified(evt);
-            // Apply event to currentSnapshot
-            if (evt.type === 'TurnStart' && evt.snapshot) {
+
+            if (evt.type === CombatEventType.TurnStart && evt.snapshot) {
                 this.currentSnapshot = JSON.parse(JSON.stringify(evt.snapshot));
                 // Rebuild actor DOM nodes for a full snapshot
                 initializeActors(this.currentSnapshot);
-            } else if (evt.delta) {
+            } else {
+                console.log(evt)
                 this.applyDeltaToSnapshot(evt.delta, this.currentSnapshot);
             }
-            executeEvent(evt, this.currentSnapshot);
+
+            console.log(this.currentSnapshot);
             updateAllActorDisplays(this.currentSnapshot);
+            animateEvent(evt);
+
             if (this.index >= this.events.length - 1) {
                 if (this.playing) this.pause();
             }
@@ -111,30 +116,33 @@ function createPlayback() {
                 // Always rebuild actor DOM nodes before updating displays
                 initializeActors(this.currentSnapshot);
                 updateAllActorDisplays(this.currentSnapshot);
+                this.replayLogs();
             }
             this.index--;
         },
 
         rebuildState() {
-            // Clear logs
-            const logContainer = document.getElementById('action-log');
-            logContainer.innerHTML = '';
-
             // Determine snapshot to use
             const snap = this.findSnapshotForIndex(this.index);
             if (snap) {
-                initializeActors(snap);
                 updateAllActorDisplays(snap);
             } else if (this.initialSnapshot) {
                 initializeActors(this.initialSnapshot);
             }
+
+            updatePlayToggleButton();
+        },
+
+        replayLogs() {
+            // Clear logs
+            const logContainer = document.getElementById('action-log');
+            logContainer.innerHTML = '';
 
             // Replay (log only, no animations) prior events for log context
             for (let i = 0; i <= this.index; i++) {
                 const evt = this.events[i];
                 logEventUnified(evt)
             }
-            updatePlayToggleButton();
         },
 
         findSnapshotForIndex(i) {

@@ -151,6 +151,8 @@ function updateAllActorDisplays(snapshot) {
  * @return {void}
  */
 function updateActorDisplay(actor) {
+    console.log(actor)
+
     const actorDiv = document.getElementById(`actor-${actor.name}`);
     if (!actorDiv) {
         console.error(`Actor display update: element not found (actor-${actor.name})`);
@@ -192,8 +194,12 @@ const playback = createPlayback();
 // Helper: update play/pause toggle button label/state
 function updatePlayToggleButton() {
     const btn = document.getElementById('btn-toggle-play');
-    if (!btn) return;
+    if (!btn) {
+        return;
+    }
+
     btn.classList.remove('is-playing', 'is-ended');
+
     if (playback.playing) {
         btn.textContent = 'Pause';
         btn.classList.add('is-playing');
@@ -207,9 +213,8 @@ function updatePlayToggleButton() {
 
 /**
  * @param {Object} event
- * @param {BattleSnapshot} currentSnapshot
  */
-function executeEvent(event, currentSnapshot) {
+function animateEvent(event) {
     switch (event.type) {
         case CombatEventType.TurnStart:
             // No special animation for turn start
@@ -267,4 +272,4 @@ function wireControls() {
     updatePlayToggleButton();
 }
 
-export { runBattleApplication, updateAllActorDisplays, updatePlayToggleButton, executeEvent, initializeActors };
+export { runBattleApplication, updateAllActorDisplays, updatePlayToggleButton, animateEvent, initializeActors };
