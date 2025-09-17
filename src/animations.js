@@ -104,19 +104,21 @@ function animateResourceDrained(event) {
     }
 }
 
-function animateHeal(event) {
-    try {
-        let healAmount;
-        for (const f of ['heal','healed','amount','value','delta','deltaHp','hpChange']) {
-            if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { healAmount = event[f]; break; }
-        }
-        if (typeof healAmount === 'number' && healAmount !== 0) {
-            const targetEl2 = document.getElementById(`actor-${event.target}`);
-            if (targetEl2) showFloatingNumber(targetEl2, Math.abs(healAmount), 'heal');
-        }
-    } catch (e) {
-        console.debug('Heal log skipped:', e);
+/**
+ * @param {CombatEvent_Healed} event - The heal event object
+ */
+function animateHeal(event)
+{
+    let healAmount = event.amount;
+    let elementId = `actor-${event.target}`;
+
+    const targetEl2 = document.getElementById(elementId);
+    if(!targetEl2) {
+        console.error('Heal animation: target element not found');
+        return;
     }
+
+    showFloatingNumber(targetEl2, Math.abs(healAmount), 'heal');
 }
 
 function animateBuffApplied(event) {
