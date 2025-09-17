@@ -398,10 +398,11 @@ body::before {
 /* === Controls Bar === */
 .controls {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 18px;
-    max-width: 1200px;
+    gap: 14px;
+    width: 100%;
+    max-width: 100%;
     margin: 20px auto 0 auto;
     padding: 14px 22px;
     background: var(--panel-bg);
@@ -411,6 +412,7 @@ body::before {
     backdrop-filter: blur(4px);
     font-family: 'Merriweather', serif;
     position: relative;
+    overflow-x: auto;
 }
 
 .control-btn {
@@ -421,7 +423,8 @@ body::before {
     color: var(--ink);
     font-size: 0.9rem;
     letter-spacing: 0.05em;
-    padding: 10px 18px;
+    padding: 10px 12px;
+    min-width: 44px;
     border-radius: 10px;
     font-family: inherit;
     font-weight: 600;
@@ -431,9 +434,9 @@ body::before {
     /* Set a fixed width for Play/Pause/Replay button to prevent resizing */
 }
 #btn-toggle-play.control-btn {
-    width: 90px; /* consistent width for Play/Pause/Replay */
-    min-width: 90px;
-    max-width: 90px;
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
     text-align: center;
     /* Prevent text overflow */
     white-space: nowrap;
@@ -521,7 +524,8 @@ body::before {
     background: #3a2e23;
     color: var(--ink);
     border: 1.5px solid #7a5a38;
-    padding: 10px 18px;
+    padding: 10px 12px;
+    min-width: 80px;
     border-radius: 10px;
     font-family: inherit;
     font-size: 0.9rem;
@@ -529,8 +533,6 @@ body::before {
     box-shadow: 0 2px 8px rgba(0,0,0,0.5) inset;
     transition: border-color 200ms, box-shadow 220ms, background 200ms;
     height: 40px;
-    min-width: 90px;
-    appearance: none;
     outline: none;
     display: flex;
     align-items: center;
