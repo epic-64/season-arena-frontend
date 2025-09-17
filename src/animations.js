@@ -61,23 +61,22 @@ function flickerOutline(targetEl, className, duration = 450) {
     setTimeout(() => targetEl.classList.remove(className), duration);
 }
 
+/**
+ * @param {CombatEvent_DamageDealt} event - The damage dealt event object
+ * @return {void}
+ */
 function animateDamageDealt(event) {
     const targetEl = document.getElementById(`actor-${event.target}`);
-    flickerOutline(targetEl, 'flicker', 450);
-    try {
-        let damageVal = event['amount'];
-        if (typeof damageVal !== 'number') {
-            for (const f of ['damage','value','delta','deltaHp','hpChange']) {
-                if (Object.prototype.hasOwnProperty.call(event, f) && typeof event[f] === 'number') { damageVal = event[f]; break; }
-            }
-        }
-        if (typeof damageVal === 'number') {
-            const shown = Math.abs(damageVal);
-            showFloatingNumber(targetEl, shown, 'damage');
-        }
-    } catch (e) {
-        console.debug('Damage log enhancement skipped:', e);
+    if (!targetEl) {
+        console.error(`Damage animation: target element not found (actor-${event.target})`);
+        return;
     }
+
+    flickerOutline(targetEl, 'flicker', 450);
+
+    let damageVal = event.amount;
+    const shown = Math.abs(damageVal);
+    showFloatingNumber(targetEl, shown, 'damage');
 }
 
 /**
@@ -105,6 +104,7 @@ function animateResourceDrained(event) {
 
 /**
  * @param {CombatEvent_Healed} event - The heal event object
+ * @return {void}
  */
 function animateHeal(event)
 {
@@ -119,12 +119,24 @@ function animateHeal(event)
     showFloatingNumber(domEl, Math.abs(healAmount), 'heal');
 }
 
+/**
+ * @param {CombatEvent_BuffApplied} event - The buff applied event object
+ * @return {void}
+ */
 function animateBuffApplied(event) {
     // Find the target actor's statusEffects container
     const actorDiv = document.getElementById(`actor-${event.target}`);
-    if (!actorDiv) return;
+    if (!actorDiv) {
+        console.error(`Buff applied animation: target element not found (actor-${event.target})`);
+        return;
+    }
+
     const statusEffects = actorDiv.querySelector('.status-effects');
-    if (!statusEffects) return;
+    if (!statusEffects) {
+        console.error('Buff applied animation: status effects container not found');
+        return;
+    }
+
     // Add animation class
     statusEffects.classList.add('buff-animate');
     statusEffects.addEventListener('animationend', function handler() {
