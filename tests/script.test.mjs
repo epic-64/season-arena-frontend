@@ -1,4 +1,5 @@
-import { createElement, updateActionLog } from '../src/script.js';
+import { createElement} from "../src/utils.js";
+import { updateActionLog } from "../src/eventLog.js";
 
 describe('createElement', () => {
     beforeEach(() => {
