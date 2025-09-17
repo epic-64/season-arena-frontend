@@ -110,15 +110,19 @@ function createPlayback() {
         },
 
         stepBack() {
-            if (this.index < 0) return;
+            if (this.index <= 0) {
+                return;
+            }
+
+            this.index--; // Decrement index before replaying logs
+            this.replayLogs();
+
             if (this.snapshotHistory.length > 0) {
                 this.currentSnapshot = this.snapshotHistory.pop();
                 // Always rebuild actor DOM nodes before updating displays
                 initializeActors(this.currentSnapshot);
                 updateAllActorDisplays(this.currentSnapshot);
-                this.replayLogs();
             }
-            this.index--;
         },
 
         rebuildState() {
