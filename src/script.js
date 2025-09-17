@@ -157,7 +157,16 @@ function updateActorDisplay(actor) {
     // Update health bar
     const healthBar = actorDiv.querySelector('.health-bar');
     if (healthBar && typeof actor.hp === 'number' && typeof actor.maxHp === 'number') {
-        healthBar.style.width = `${(actor.hp / actor.maxHp) * 100}%`;
+        const percent = actor.maxHp > 0 ? (actor.hp / actor.maxHp) : 0;
+        healthBar.style.width = `${percent * 100}%`;
+        // Remove previous color classes
+        healthBar.classList.remove('health-bar-yellow', 'health-bar-red');
+        if (percent < 0.33) {
+            healthBar.classList.add('health-bar-red');
+        } else if (percent < 0.66) {
+            healthBar.classList.add('health-bar-yellow');
+        }
+        // else: default green/blue
     }
 
     // Update status effects
