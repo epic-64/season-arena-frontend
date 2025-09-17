@@ -180,33 +180,7 @@ body { margin: 0; padding: 0; }
     100% { opacity: 0; }
 }
 
-.health-bar-container {
-    width: var(--portrait-size);
-    height: 12px;
-    background: linear-gradient(90deg, #2a231d 0%, #382d25 100%);
-    border-radius: 6px;
-    /* removed margin-top in favor of parent flex gap */
-    border: 1px solid #6a5138;
-    position: relative;
-    overflow: hidden;
-}
-
-.health-bar {
-    height: 100%;
-    display: flex;
-    background: linear-gradient(90deg, var(--health-deep-green) 0%, var(--health-bright-green) 90%, #9cffb3 100%);
-    border-radius: 6px;
-    box-shadow: 0 0 8px 0 var(--health-bright-green);
-    transition: width 0.4s, background 0.4s, box-shadow 0.4s;
-}
-.health-bar-yellow {
-    background: linear-gradient(90deg, #fbb54e 0%, #ffd700 90%, #ffd454 100%);
-    box-shadow: 0 0 8px 0 #ffd700;
-}
-.health-bar-red {
-    background: linear-gradient(90deg, #c50000 0%, #ff2222 90%, #ff4d4d 100%);
-    box-shadow: 0 0 8px 0 #ff2222;
-}
+/* Health bar styles moved to healthbar.css */
 
 .action-log {
     /* Simplified: rely on column width; removed fixed 360px width */
@@ -594,7 +568,7 @@ body::before {
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
     #btn-toggle-play:not(.is-playing):not(.is-ended) { animation:none; }
-    .control-btn, .portrait, .health-bar { transition: none !important; }
+    .control-btn, .portrait { transition: none !important; }
 }
 
 @media (max-width: 900px) {
