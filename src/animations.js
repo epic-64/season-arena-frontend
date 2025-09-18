@@ -6,44 +6,10 @@ import { skillEmojis } from './emojiMappings.js';
 
 function animateSkillUsed(event) {
     const actorEl = document.getElementById(`actor-${event.actor}`);
-
-    if (!actorEl || !Array.isArray(event.targets) || event.targets.length === 0) {
+    if (!actorEl) {
+        console.error(`Skill used animation: actor element not found (actor-${event.actor})`);
         return;
     }
-
-    // Animate skill emoji for each target
-    event.targets.forEach(targetName => {
-        const targetEl = document.getElementById(`actor-${targetName}`);
-        if (!targetEl) return;
-
-        const skillEmoji = createElement('div', {
-            text: skillEmojis[event.skill],
-            styles: {
-                position: 'absolute',
-                fontSize: '2em',
-                transition: 'transform 0.5s, opacity 0.5s',
-                opacity: 1
-            }
-        });
-
-        const actorRect = actorEl.getBoundingClientRect();
-        const targetRect = targetEl.getBoundingClientRect();
-
-        document.body.appendChild(skillEmoji);
-        skillEmoji.style.left = `${actorRect.left + window.scrollX}px`;
-        skillEmoji.style.top = `${actorRect.top + window.scrollY}px`;
-
-        // Fly to target
-        requestAnimationFrame(() => {
-            skillEmoji.style.transform = `translate(${targetRect.left - actorRect.left}px, ${targetRect.top - actorRect.top}px)`;
-        });
-
-        // Fade + remove
-        setTimeout(() => {
-            skillEmoji.style.opacity = 0;
-            skillEmoji.remove();
-        }, 1000);
-    });
 
     // Actor strike animation (only once)
     actorEl.classList.add('strike');
