@@ -10,7 +10,7 @@ import {statusEmojis} from './emojiMappings.js';
 import {ActorClass} from './types.js';
 import {createElement} from './utils.js';
 import {logEventUnified} from './eventLog.js';
-import { createPlayback } from './playback.js';
+import {createPlayback} from './playback.js';
 
 async function loadLog() {
     try {
