@@ -4,6 +4,10 @@
 import { createElement } from './utils.js';
 import { skillEmojis } from './emojiMappings.js';
 
+/**
+ * @param {CombatEvent_SkillUsed} event - The skill used event object
+ * @return {void}
+ */
 function animateSkillUsed(event) {
     const actorEl = document.getElementById(`actor-${event.actor}`);
     if (!actorEl) {
