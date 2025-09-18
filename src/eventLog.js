@@ -38,23 +38,23 @@ function formatEventLog(event) {
             return undefined;
         };
         switch (type) {
-            case "playground.engine_v1.CombatEvent.TurnStart": {
+            case "TurnStart": {
                 return `--- Turn ${event.turn} ---`;
             }
-            case "playground.engine_v1.CombatEvent.SkillUsed": {
+            case "SkillUsed": {
                 const actor = event.actor || 'Unknown';
                 const skill = event.skill || 'Skill';
                 const targets = Array.isArray(event.targets) ? event.targets.join(', ') : (event.targets || 'Unknown');
                 return `${actor} uses ${skill} on ${targets}`;
             }
-            case "playground.engine_v1.CombatEvent.BuffApplied": {
+            case "BuffApplied": {
                 // source, target, buffId
                 const source = event.source;
                 const target = event.target;
                 const buff = event.buffId;
                 return `${source} applies ${buff} to ${target}`;
             }
-            case "playground.engine_v1.CombatEvent.DamageDealt": {
+            case "DamageDealt": {
                 const source = event.actor || event.source || 'Unknown';
                 const target = event.target || 'Unknown';
                 let amount = getAmount(['amount','damage','value','delta','deltaHp','hpChange'], event);
@@ -66,7 +66,7 @@ function formatEventLog(event) {
                 if (typeof newHp === 'number' && typeof maxHp === 'number') msg += ` (HP ${newHp}/${maxHp})`;
                 return msg;
             }
-            case "playground.engine_v1.CombatEvent.Healed": {
+            case "Healed": {
                 const source = event.source || event.actor || 'Unknown';
                 const target = event.target || (Array.isArray(event.targets) ? event.targets.join(', ') : 'Unknown');
                 let amount = getAmount(['heal','healed','amount','value','delta','deltaHp','hpChange'], event);
@@ -78,7 +78,7 @@ function formatEventLog(event) {
                 if (typeof newHp === 'number' && typeof maxHp === 'number') msg += ` (HP ${newHp}/${maxHp})`;
                 return msg;
             }
-            case "playground.engine_v1.CombatEvent.ResourceDrained": {
+            case "ResourceDrained": {
                 const target = event.target || 'Unknown';
                 const buff = event.buffId || 'Effect';
                 let amount = getAmount(['amount','value','delta','deltaHp','hpChange'], event);
