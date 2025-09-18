@@ -174,19 +174,19 @@ function updatePlayToggleButton() {
 
 function executeEvent(event) {
     switch (event.type) {
-        case "playground.engine_v1.CombatEvent.SkillUsed":
+        case "SkillUsed":
             animateSkillUsed(event);
             break;
-        case "playground.engine_v1.CombatEvent.DamageDealt":
+        case "DamageDealt":
             animateDamageDealt(event);
             break;
-        case "playground.engine_v1.CombatEvent.ResourceDrained":
+        case "ResourceDrained":
             animateResourceDrained(event);
             break;
-        case "playground.engine_v1.CombatEvent.Healed":
+        case "Healed":
             animateHeal(event);
             break;
-        case "playground.engine_v1.CombatEvent.BuffApplied":
+        case "BuffApplied":
             animateBuffApplied(event);
             break;
         default:
@@ -198,7 +198,7 @@ function executeEvent(event) {
 async function runBattleApplication() {
     const logData = await loadLog();
 
-    const initialSnapshotEvent = logData.find(e => e.type === "playground.engine_v1.CombatEvent.TurnStart");
+    const initialSnapshotEvent = logData.find(e => e.type === "TurnStart");
     if (!initialSnapshotEvent?.snapshot) {
         console.error("Initial snapshot not found in log.");
         return;
