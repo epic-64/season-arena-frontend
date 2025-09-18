@@ -11,7 +11,7 @@ function createPlayback() {
         index: -1,          // last executed index
         playing: false,
         timer: null,
-        baseInterval: 400,
+        baseInterval: 500,
         speed: 1,
         initialSnapshot: null,
         currentSnapshot: null,

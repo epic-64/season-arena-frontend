@@ -9,7 +9,6 @@ import {
 import {statusEmojis} from './emojiMappings.js';
 import {ActorClass, CombatEventType} from './types.js';
 import {createElement} from './utils.js';
-import {logEventUnified} from './eventLog.js';
 import {createPlayback} from './playback.js';
 
 async function loadLog() {
@@ -22,8 +21,8 @@ async function loadLog() {
 }
 
 // === Actor Setup ===
-function getPortraitSrc(actorClass) {
-    // Map ActorClass values to portrait filenames
+function getPortraitSrc(actorClass)
+{
     const classToFile = {
         [ActorClass.Mage]: 'mage.png',
         [ActorClass.Cleric]: 'druid.png',
@@ -40,7 +39,8 @@ function getPortraitSrc(actorClass) {
     return `assets/images/portraits/${file}`;
 }
 
-function initializeActors(snapshot) {
+function initializeActors(snapshot)
+{
     const heroes = document.getElementById('heroes');
     const enemies = document.getElementById('enemies');
     // Clear previous actors to avoid duplicate portraits when rebuilding state
@@ -184,7 +184,8 @@ function updateActorDisplay(actor)
 const playback = createPlayback();
 
 // Helper: update play/pause toggle button label/state
-function updatePlayToggleButton() {
+function updatePlayToggleButton()
+{
     const btn = document.getElementById('btn-toggle-play');
     if (!btn) {
         return;
