@@ -160,6 +160,7 @@ function updateActorDisplay(actor)
 
     const percent = actor.maxHp > 0 ? (actor.hp / actor.maxHp) : 0;
     healthBar.style.width = `${percent * 100}%`;
+
     // Remove previous color classes
     healthBar.classList.remove('health-bar-yellow', 'health-bar-red');
     if (percent < 0.33) {
@@ -179,6 +180,7 @@ function updateActorDisplay(actor)
     statusEffects.innerHTML = '';
     renderStatusEffects(statusEffects, actor.statBuffs, buff => buff.statChanges ? `+${JSON.stringify(buff.statChanges)} (${buff.duration || 0}t)` : undefined);
     renderStatusEffects(statusEffects, actor.resourceTicks, tick => tick.resourceChanges ? `${JSON.stringify(tick.resourceChanges)} (${tick.duration || 0}t)` : undefined);
+    renderStatusEffects(statusEffects, actor.statOverrides, override => override.stats ? `=${JSON.stringify(override.stats)}` : undefined);
 }
 
 const playback = createPlayback();

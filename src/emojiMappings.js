@@ -15,6 +15,7 @@ export const skillEmojis = {
     "Ice Shot": "❄️🏹",
     "Black Hole": "💫",
     "Take Aim": "🎯",
+    "Cheer": "🤗",
 };
 
 export const statusEmojis = {
@@ -35,4 +36,5 @@ export const statusEmojis = {
     "Slow": "🐢",
     "Amplify": "🔺",
     "Aimed": "🔺",
+    "Cheer": "🎉",
 };
