@@ -13,7 +13,7 @@ import {createPlayback} from './playback.js';
 
 async function loadLog() {
     try {
-        const response = await fetch('src/log2.json');
+        const response = await fetch('examples/battle.json');
         return await response.json();
     } catch (error) {
         console.error('Error loading log:', error);
