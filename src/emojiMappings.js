@@ -14,6 +14,7 @@ export const skillEmojis = {
     "Ice Lance": "☄️❄️",
     "Ice Shot": "❄️🏹",
     "Black Hole": "💫",
+    "Take Aim": "🎯",
 };
 
 export const statusEmojis = {

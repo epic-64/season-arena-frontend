@@ -127,6 +127,7 @@ export const CombatEventType = {
  * @property {string} type
  * @property {string} actor
  * @property {string} skill
+ * @property {string[]} targets
  * @property {BattleSnapshot} snapshot
  */
 
