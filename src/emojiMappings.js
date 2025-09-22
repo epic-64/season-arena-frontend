@@ -16,6 +16,7 @@ export const skillEmojis = {
     "Black Hole": "💫",
     "Take Aim": "🎯",
     "Cheer": "🤗",
+    "Solo": "🎵",
 };
 
 export const statusEmojis = {
